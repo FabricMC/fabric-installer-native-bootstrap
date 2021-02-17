@@ -9,6 +9,10 @@ jobs:
         with:
           nim-version: '1.4.2'
       - run: nimble build -Y -d:release
+      - uses: crazy-max/ghaction-upx@v1
+        with:
+          version: 3.96
+          file: build/bin/bootstrap.exe
       - uses: actions/upload-artifact@v2
         with:
           name: Artifacts
