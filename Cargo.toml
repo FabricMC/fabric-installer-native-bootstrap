@@ -1,0 +1,15 @@
+[package]
+name = "fabric-installer-native-bootstrap"
+version = "0.0.1"
+authors = ["modmuss50 <modmuss50@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+winreg = "0.8"
+native-dialog = "0.5.4"
+webbrowser = "0.5.5"
+
+[build-dependencies]
+embed-resource = "1.6.0"

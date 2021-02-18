@@ -1,10 +1,7 @@
 /*
 
-!/.github
+!/src
 
-!/.gitignore
-!/LICENSE
-
-!/bootstrap.nim
-!/bootstrap.nimble
-!/nim.cfg
+!.gitignore
+!Cargo.toml
+!build.rs
