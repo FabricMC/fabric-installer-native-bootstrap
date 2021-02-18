@@ -8,11 +8,12 @@ jobs:
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: '1.4.2'
-      - run: nimble build -Y -d:release
-      - uses: crazy-max/ghaction-upx@v1
-        with:
-          version: v3.96
-          file: build/bin/bootstrap.exe
+      - run: nimble build -Y -f --cpu:i386
+      - run: Rename-Item -Path build/bin/bootstrap.exe -NewName bootstrap.i386.exe
+      - run: nimble build -Y -f --cpu:amd64
+      - run: Rename-Item -Path build/bin/bootstrap.exe -NewName bootstrap.amd64.exe
+      - run: nimble build -Y -f --cpu:arm64
+      - run: Rename-Item -Path build/bin/bootstrap.exe -NewName bootstrap.arm64.exe
       - uses: actions/upload-artifact@v2
         with:
           name: Artifacts

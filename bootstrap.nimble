@@ -4,6 +4,7 @@ license       = "Apache-2.0"
 srcDir        = "."
 bin           = @["bootstrap"]
 binDir        = "build/bin/"
+backend       = "cpp"
 
 requires "nim >= 1.4.2"
 requires "dialogs >= 1.1.1"
