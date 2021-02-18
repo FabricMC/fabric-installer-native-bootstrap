@@ -12,8 +12,6 @@ jobs:
       - run: Rename-Item -Path build/bin/bootstrap.exe -NewName bootstrap.i386.exe
       - run: nimble build -Y -f --cpu:amd64
       - run: Rename-Item -Path build/bin/bootstrap.exe -NewName bootstrap.amd64.exe
-      - run: nimble build -Y -f --cpu:arm64
-      - run: Rename-Item -Path build/bin/bootstrap.exe -NewName bootstrap.arm64.exe
       - uses: actions/upload-artifact@v2
         with:
           name: Artifacts
