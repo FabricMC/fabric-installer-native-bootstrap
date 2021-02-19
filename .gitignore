@@ -7,3 +7,4 @@
 !.gitignore
 !Cargo.toml
 !build.rs
+!LICENSE
