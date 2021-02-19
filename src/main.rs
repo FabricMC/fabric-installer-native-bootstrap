@@ -35,7 +35,7 @@ fn main() {
 fn try_minecraft_java(dir: &String) -> bool {
     let paths: [&str; 4] = [
         r"runtime\jre-legacy\windows-x64\jre-legacy\bin\javaw.exe",
-        r"runtime\jre-legacy\windows-x68\jre-legacy\bin\javaw.exe",
+        r"runtime\jre-legacy\windows-x86\jre-legacy\bin\javaw.exe",
         r"runtime\jre-x64\bin\javaw.exe",
         r"runtime\jre-x86\bin\javaw.exe"
     ];
