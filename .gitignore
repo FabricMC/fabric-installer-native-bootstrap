@@ -3,6 +3,7 @@
 !/src
 !/res
 !/platform
+!/.github
 
 !.gitignore
 !Cargo.toml
