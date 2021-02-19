@@ -1,0 +1,39 @@
+// This is not used for building, only for deploying! You prob dont need to run this.
+plugins {
+	id 'maven-publish'
+}
+
+version = "0.1.0"
+
+def ENV = System.getenv()
+def architecture = ENV.TARGET
+
+if (!architecture) {
+    throw new Exception("No architecture specififed")
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId "net.fabricmc.fabric-installer-native-bootstrap"
+			artifactId "windows-" + architecture
+			version project.version
+
+			artifact (file("${projectDir}/target/${architecture}-pc-windows-msvc/release/fabric-installer-native-bootstrap.exe")) {
+				classifier = null
+			}
+		}
+	}
+
+	repositories {
+		if (ENV.MAVEN_URL) {
+			maven {
+				url ENV.MAVEN_URL
+				credentials {
+					username ENV.MAVEN_USERNAME
+					password ENV.MAVEN_PASSWORD
+				}
+			}
+		}
+	}
+}
