@@ -1,0 +1,12 @@
+/*
+
+!/src
+!/res
+!/platform
+!/.github
+
+!.gitignore
+!Cargo.toml
+!build.rs
+!LICENSE
+!build.gradle

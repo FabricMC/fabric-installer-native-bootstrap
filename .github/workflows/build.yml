@@ -1,0 +1,16 @@
+name: Build
+on: [push, pull_request]
+jobs:
+  build:
+    strategy:
+      matrix:
+        target: [ x86_64, i686, aarch64 ]
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v2
+      - run: rustup target add ${{ matrix.target }}-pc-windows-msvc
+      - run: cargo build --release --target ${{ matrix.target }}-pc-windows-msvc
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Artifacts ${{ matrix.target }}
+          path: target/${{ matrix.target }}-pc-windows-msvc/release/fabric-installer-native-bootstrap.exe
