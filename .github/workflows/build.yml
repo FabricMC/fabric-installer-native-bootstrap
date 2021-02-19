@@ -8,15 +8,9 @@ jobs:
     runs-on: windows-2019
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: 1.50.0
-          target: ${{ matrix.target }}-pc-windows-msvc
-      - uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release --target ${{ matrix.target }}-pc-windows-msvc
+      - run: rustup target add ${{ matrix.target }}-pc-windows-msvc
+      - run: cargo build --release --target ${{ matrix.target }}-pc-windows-msvc
       - uses: actions/upload-artifact@v2
         with:
           name: Artifacts ${{ matrix.target }}
-          path: target/release/fabric-installer-native-bootstrap.exe
+          path: target/${{ matrix.target }}-pc-windows-msvc/release/fabric-installer-native-bootstrap.exe
