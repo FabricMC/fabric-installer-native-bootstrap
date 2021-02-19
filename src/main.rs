@@ -20,14 +20,14 @@ fn main() {
 
     match env::var("JAVA_HOME") {
         Ok(val) => {
-            let full_path: String = val.to_owned() + r"bin\javaw.exe";
-            launch_if_valid_java_installation(&full_path)
+            let full_path: String = val + r"bin\javaw.exe";
+            launch_if_valid_java_installation(full_path)
         },
         Err(_) => {},
     }
 
     // Getting thin on the ground, lets check the path.
-    launch_if_valid_java_installation(&"javaw".to_string());
+    launch_if_valid_java_installation("javaw".to_string());
 
     show_error();
 }
@@ -42,7 +42,7 @@ fn try_minecraft_java(dir: &String) -> bool {
 
     for path in &paths {
         let full_path: String = dir.to_owned() + path;
-        launch_if_valid_java_installation(&full_path)
+        launch_if_valid_java_installation(full_path)
     }
 
     // None of the above paths were valid
@@ -55,8 +55,8 @@ fn get_minecraft_installation_dir() -> Result<String> {
     return launcher.get_value("InstallLocation");
 }
 
-fn launch_if_valid_java_installation(path: &String) {
-    if !is_valid_java_installation(path) {
+fn launch_if_valid_java_installation(path: String) {
+    if !is_valid_java_installation(&path) {
         return;
     }
 
@@ -109,7 +109,7 @@ fn show_error() -> ! {
     match result {
         Ok(open) => {
             if open {
-                if !webbrowser::open("https://fabricmc.net/wiki/player:tutorials:java:windows").is_ok() {
+                if let Err(_) = webbrowser::open("https://fabricmc.net/wiki/player:tutorials:java:windows") {
                     panic!("Failed to open browser");
                 }
             }
