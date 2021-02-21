@@ -99,7 +99,7 @@ fn show_error() -> ! {
     let result = MessageDialog::new()
         .set_type(MessageType::Error)
         .set_title("Fabric Installer")
-        .set_text("Unable to find a valid Java Installation.\n\nWould you like to open a browser to the following page?\n\nhttps://fabricmc.net/wiki/player:tutorials:java:windows")
+        .set_text("The Fabric Installer could not find a valid Java installation.\n\nWould you like to open the Fabric wiki to find out how to fix this?\n\nURL: https://fabricmc.net/wiki/player:tutorials:java:windows")
         .show_confirm();
 
     if let Err(_) = result {
