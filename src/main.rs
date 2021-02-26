@@ -36,6 +36,8 @@ fn main() {
 }
 
 fn try_minecraft_java<P: AsRef<Path>>(dir: P) -> bool {
+    let dir = dir.as_ref();
+
     let paths = [
         "runtime/jre-legacy/windows-x64/jre-legacy/bin/javaw.exe",
         "runtime/jre-legacy/windows-x86/jre-legacy/bin/javaw.exe",
@@ -60,7 +62,9 @@ fn get_minecraft_installation_dir() -> Result<PathBuf> {
 }
 
 fn launch_if_valid_java_installation<P: AsRef<Path>>(path: P) {
-    if !is_valid_java_installation(&path) {
+    let path = path.as_ref();
+
+    if !is_valid_java_installation(path) {
         return;
     }
 
