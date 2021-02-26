@@ -9,59 +9,62 @@ use std::env;
 use native_dialog::MessageDialog;
 use native_dialog::MessageType;
 use webbrowser;
+use std::path::{PathBuf, Path};
+use std::ffi::OsString;
 
 fn main() {
     if let Ok(dir) = get_minecraft_installation_dir() {
-        println!("Minecraft install dir {}", dir);
+        println!("Minecraft install dir {}", dir.to_str().unwrap());
         try_minecraft_java(&dir);
     } else {
         println!("Could not find minecraft install dir.");
     }
 
-    match env::var("JAVA_HOME") {
-        Ok(val) => {
-            let full_path: String = val + r"bin\javaw.exe";
-            launch_if_valid_java_installation(full_path)
+    match env::var_os("JAVA_HOME") {
+        Some(val) => {
+            let mut path = PathBuf::from(val);
+            path.push("bin/javaw.exe");
+            launch_if_valid_java_installation(&path)
         },
-        Err(_) => {},
+        None => {},
     }
 
     // Getting thin on the ground, lets check the path.
-    launch_if_valid_java_installation("javaw".to_string());
+    launch_if_valid_java_installation("javaw");
 
     show_error();
 }
 
-fn try_minecraft_java(dir: &String) -> bool {
-    let paths: [&str; 4] = [
-        r"runtime\jre-legacy\windows-x64\jre-legacy\bin\javaw.exe",
-        r"runtime\jre-legacy\windows-x86\jre-legacy\bin\javaw.exe",
-        r"runtime\jre-x64\bin\javaw.exe",
-        r"runtime\jre-x86\bin\javaw.exe"
+fn try_minecraft_java<P: AsRef<Path>>(dir: P) -> bool {
+    let paths = [
+        "runtime/jre-legacy/windows-x64/jre-legacy/bin/javaw.exe",
+        "runtime/jre-legacy/windows-x86/jre-legacy/bin/javaw.exe",
+        "runtime/jre-x64/bin/javaw.exe",
+        "runtime/jre-x86/bin/javaw.exe"
     ];
 
     for path in &paths {
-        let full_path: String = dir.to_owned() + path;
+        let full_path = dir.join(path);
         launch_if_valid_java_installation(full_path)
     }
 
     // None of the above paths were valid
-    return false;
+    false
 }
 
-fn get_minecraft_installation_dir() -> Result<String> {
+fn get_minecraft_installation_dir() -> Result<PathBuf> {
     let hcu = RegKey::predef(winreg::enums::HKEY_CURRENT_USER);
     let launcher = hcu.open_subkey(r"SOFTWARE\Mojang\InstalledProducts\Minecraft Launcher")?;
-    return launcher.get_value("InstallLocation");
+    let install_location: Result<OsString> = launcher.get_value("InstallLocation");
+    install_location.map(|s| PathBuf::from(s))
 }
 
-fn launch_if_valid_java_installation(path: String) {
+fn launch_if_valid_java_installation<P: AsRef<Path>>(path: P) {
     if !is_valid_java_installation(&path) {
         return;
     }
 
-    let args: Vec<String> = env::args().collect();
-    let launch_exe: &String = &args[0];
+    let launch_exe = env::current_exe().expect("could not get path to current executable");
 
     let status = Command::new(path)
         .arg("-jar")
@@ -81,42 +84,33 @@ fn launch_if_valid_java_installation(path: String) {
     exit(-1);
 }
 
-fn is_valid_java_installation(path: &String) -> bool {
+fn is_valid_java_installation<P: AsRef<Path>>(path: P) -> bool {
+    let path = path.as_ref();
+
     let status = Command::new(path)
         .arg("-version")
         .status();
 
     if let Ok(status) = status {
-        println!("Found java java installation at: {}", path);
-        return status.success()
+        println!("Found java java installation at: {}", path.to_str().unwrap());
+        status.success()
+    } else {
+        println!("No valid java installation found at: {}", path.to_str().unwrap());
+        false
     }
-
-    println!("No valid java installation found at: {}", path);
-    return false;
 }
 
 fn show_error() -> ! {
-    let result = MessageDialog::new()
+    let open = MessageDialog::new()
         .set_type(MessageType::Error)
         .set_title("Fabric Installer")
         .set_text("The Fabric Installer could not find a valid Java installation.\n\nWould you like to open the Fabric wiki to find out how to fix this?\n\nURL: https://fabricmc.net/wiki/player:tutorials:java:windows")
-        .show_confirm();
+        .show_confirm()
+        .expect("Failed to show dialog");
 
-    if let Err(_) = result {
-        panic!("Failed to show dialog");
-    }
-
-    match result {
-        Ok(open) => {
-            if open {
-                if let Err(_) = webbrowser::open("https://fabricmc.net/wiki/player:tutorials:java:windows") {
-                    panic!("Failed to open browser");
-                }
-            }
-        },
-        Err(_) => {
-            panic!("Failed to show dialog");
-        },
+    if open {
+        webbrowser::open("https://fabricmc.net/wiki/player:tutorials:java:windows")
+            .expect("Failed to open browser");
     }
 
     // Graceful exit otherwise windows may show additional help
