@@ -20,13 +20,10 @@ fn main() {
         println!("Could not find minecraft install dir.");
     }
 
-    match env::var_os("JAVA_HOME") {
-        Some(val) => {
-            let mut path = PathBuf::from(val);
-            path.push("bin/javaw.exe");
-            launch_if_valid_java_installation(&path)
-        },
-        None => {},
+    if let Some(val) = env::var_os("JAVA_HOME") {
+        let mut path = PathBuf::from(val);
+        path.push("bin/javaw.exe");
+        launch_if_valid_java_installation(&path)
     }
 
     // Getting thin on the ground, lets check the path.
