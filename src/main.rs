@@ -14,7 +14,7 @@ use std::ffi::OsString;
 
 fn main() {
     if let Ok(dir) = get_minecraft_installation_dir() {
-        println!("Minecraft install dir {}", dir.to_str().unwrap());
+        println!("Minecraft install dir {}", dir.display());
         try_minecraft_java(&dir);
     } else {
         println!("Could not find minecraft install dir.");
@@ -93,10 +93,10 @@ fn is_valid_java_installation<P: AsRef<Path>>(path: P) -> bool {
         .status();
 
     if let Ok(status) = status {
-        println!("Found java java installation at: {}", path.to_str().unwrap());
+        println!("Found java java installation at: {}", path.display());
         status.success()
     } else {
-        println!("No valid java installation found at: {}", path.to_str().unwrap());
+        println!("No valid java installation found at: {}", path.display());
         false
     }
 }
