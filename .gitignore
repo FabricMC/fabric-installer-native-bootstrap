@@ -4,6 +4,7 @@
 !/res
 !/platform
 !/.github
+!/.cargo
 
 !.gitignore
 !Cargo.toml
