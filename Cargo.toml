@@ -10,7 +10,9 @@ edition = "2018"
 winreg = "0.8"
 native-dialog = "0.5.4"
 webbrowser = "0.5.5"
+windows = "0.9.1"
 
 [build-dependencies]
 embed-resource = "1.6.0"
 winres = "0.1.11"
+windows = "0.9.1"
