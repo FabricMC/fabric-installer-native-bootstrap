@@ -84,7 +84,6 @@ fn launch_if_valid_java_installation<P: AsRef<Path>>(path: P) {
         .arg(format!("-Dfabric.installer.mojanglauncher.open={}", launcher_open))
         .arg("-jar")
         .arg(launch_exe)
-        .args(env::args())// Pass the run args through
         .status();
 
     if let Ok(status) = status {
