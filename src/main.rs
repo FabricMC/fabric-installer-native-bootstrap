@@ -2,16 +2,6 @@
 // See RFC 1665 for additional details
 #![windows_subsystem = "windows"]
 
-mod bindings {
-    windows::include_bindings!();
-}
-
-use bindings::{
-    Windows::Win32::SystemServices::{CreateMutexA},
-    Windows::Win32::WindowsProgramming::{CloseHandle},
-    Windows::Win32::Debug::{GetLastError, WIN32_ERROR},
-};
-
 use winreg::RegKey;
 use std::process::{Command, exit};
 use std::io::Result;
@@ -77,11 +67,7 @@ fn launch_if_valid_java_installation<P: AsRef<Path>>(path: P) {
 
     let launch_exe = env::current_exe().expect("could not get path to current executable");
 
-    let launcher_open = is_mojang_launcher_mutex_open();
-    println!("Mojang Launcher open: {}", launcher_open);
-
     let status = Command::new(path)
-        .arg(format!("-Dfabric.installer.mojanglauncher.open={}", launcher_open))
         .arg("-jar")
         .arg(launch_exe)
         .status();
@@ -130,20 +116,4 @@ fn show_error() -> ! {
 
     // Graceful exit otherwise windows may show additional help
     exit(0)
-}
-
-fn is_mojang_launcher_mutex_open() -> bool {
-    unsafe {
-        let mutex_handle = CreateMutexA(std::ptr::null_mut(), true, "MojangLauncher");
-
-        if GetLastError() == WIN32_ERROR::ERROR_ALREADY_EXISTS {
-            // Already exists so must be already open.
-            return true;
-        }
-
-        // Dont worry its safe ;)
-        CloseHandle(mutex_handle);
-    }
-
-    return false;
 }

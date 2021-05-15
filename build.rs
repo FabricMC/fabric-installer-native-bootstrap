@@ -15,11 +15,5 @@ fn main() {
         if let Err(_) = result {
             panic!("Failed to set windows resources");
         }
-
-        windows::build!(
-            Windows::Win32::SystemServices::{CreateMutexA},
-            Windows::Win32::WindowsProgramming::{CloseHandle},
-            Windows::Win32::Debug::{GetLastError, WIN32_ERROR},
-        );
     }
 }
