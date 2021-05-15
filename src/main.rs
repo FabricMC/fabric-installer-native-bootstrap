@@ -10,7 +10,7 @@ use native_dialog::MessageDialog;
 use native_dialog::MessageType;
 use webbrowser;
 use std::path::{PathBuf, Path};
-use std::ffi::OsString;
+use path_slash::PathBufExt;
 
 fn main() {
     if let Ok(dir) = get_minecraft_installation_dir() {
@@ -36,10 +36,10 @@ fn try_minecraft_java<P: AsRef<Path>>(dir: P) -> bool {
     let dir = dir.as_ref();
 
     let paths = [
-        "runtime/jre-legacy/windows-x64/jre-legacy/bin/javaw.exe",
-        "runtime/jre-legacy/windows-x86/jre-legacy/bin/javaw.exe",
-        "runtime/jre-x64/bin/javaw.exe",
-        "runtime/jre-x86/bin/javaw.exe"
+        r"runtime\jre-legacy\windows-x64\jre-legacy/bin/javaw.exe",
+        r"runtime\jre-legacy\windows-x86\jre-legacy/bin/javaw.exe",
+        r"runtime\jre-x64\bin\javaw.exe",
+        r"runtime\jre-x86\bin\javaw.exe"
     ];
 
     for path in &paths {
@@ -54,8 +54,8 @@ fn try_minecraft_java<P: AsRef<Path>>(dir: P) -> bool {
 fn get_minecraft_installation_dir() -> Result<PathBuf> {
     let hcu = RegKey::predef(winreg::enums::HKEY_CURRENT_USER);
     let launcher = hcu.open_subkey(r"SOFTWARE\Mojang\InstalledProducts\Minecraft Launcher")?;
-    let install_location: Result<OsString> = launcher.get_value("InstallLocation");
-    install_location.map(|s| PathBuf::from(s))
+    let install_location: Result<String> = launcher.get_value("InstallLocation");
+    return install_location.map(|s| PathBuf::from_slash(s))
 }
 
 fn launch_if_valid_java_installation<P: AsRef<Path>>(path: P) {
