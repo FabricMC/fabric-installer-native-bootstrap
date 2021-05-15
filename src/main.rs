@@ -36,8 +36,10 @@ fn try_minecraft_java<P: AsRef<Path>>(dir: P) -> bool {
     let dir = dir.as_ref();
 
     let paths = [
-        r"runtime\jre-legacy\windows-x64\jre-legacy/bin/javaw.exe",
-        r"runtime\jre-legacy\windows-x86\jre-legacy/bin/javaw.exe",
+        r"runtime\java-runtime-alpha\windows-x64\java-runtime-alpha\bin\javaw.exe",
+        r"runtime\java-runtime-alpha\windows-x86\java-runtime-alpha\bin\javaw.exe",
+        r"runtime\jre-legacy\windows-x64\jre-legacy\bin\javaw.exe",
+        r"runtime\jre-legacy\windows-x86\jre-legacy\bin\javaw.exe",
         r"runtime\jre-x64\bin\javaw.exe",
         r"runtime\jre-x86\bin\javaw.exe"
     ];
