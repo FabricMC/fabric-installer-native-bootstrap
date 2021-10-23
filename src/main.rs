@@ -20,14 +20,14 @@ fn main() {
         println!("Could not find minecraft install dir.");
     }
 
-    if let Some(val) = env::var_os("JAVA_HOME") {
-        let mut path = PathBuf::from(val);
-        path.push("bin/javaw.exe");
-        launch_if_valid_java_installation(&path)
-    }
+    // if let Some(val) = env::var_os("JAVA_HOME") {
+    //     let mut path = PathBuf::from(val);
+    //     path.push("bin/javaw.exe");
+    //     launch_if_valid_java_installation(&path)
+    // }
 
-    // Getting thin on the ground, lets check the path.
-    launch_if_valid_java_installation("javaw");
+    // // Getting thin on the ground, lets check the path.
+    // launch_if_valid_java_installation("javaw");
 
     show_error();
 }
@@ -46,7 +46,9 @@ fn try_minecraft_java<P: AsRef<Path>>(dir: P) -> bool {
 
     for path in &paths {
         let full_path = dir.join(path);
-        launch_if_valid_java_installation(full_path)
+        if full_path.exists() {
+            launch_if_valid_java_installation(full_path)
+        }
     }
 
     // None of the above paths were valid
@@ -107,7 +109,7 @@ fn show_error() -> ! {
     let open = MessageDialog::new()
         .set_type(MessageType::Error)
         .set_title("Fabric Installer")
-        .set_text("The Fabric Installer could not find a valid Java installation.\n\nWould you like to open the Fabric wiki to find out how to fix this?\n\nURL: https://fabricmc.net/wiki/player:tutorials:java:windows")
+        .set_text("The Fabric Installer could not find a valid Java installation installed by Minecraft.\n\nPlease install and launch minecraft, or try the universal '.jar' fabric installer.\n\nWould you like to open the Fabric wiki for more help?\n\nURL: https://fabricmc.net/wiki/player:tutorials:java:windows")
         .show_confirm()
         .expect("Failed to show dialog");
 
