@@ -109,7 +109,7 @@ fn show_error() -> ! {
     let open = MessageDialog::new()
         .set_type(MessageType::Error)
         .set_title("Fabric Installer")
-        .set_text("The Fabric Installer could not find a valid Java installation installed by Minecraft.\n\nPlease install and launch minecraft, or try the universal '.jar' fabric installer.\n\nWould you like to open the Fabric wiki for more help?\n\nURL: https://fabricmc.net/wiki/player:tutorials:java:windows")
+        .set_text("The Fabric Installer could not find a valid Java installation installed by Minecraft.\n\nPlease install and launch Minecraft, or try the universal '.jar' Fabric installer.\n\nWould you like to open the Fabric wiki for more help?\n\nURL: https://fabricmc.net/wiki/player:tutorials:java:windows")
         .show_confirm()
         .expect("Failed to show dialog");
 
