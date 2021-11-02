@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = "0.1.6"
+version = "0.2.0"
 
 def ENV = System.getenv()
 def architecture = ENV.TARGET
