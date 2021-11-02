@@ -8,6 +8,7 @@
 
 !.gitignore
 !Cargo.toml
+!Cargo.lock
 !build.rs
 !LICENSE
 !build.gradle

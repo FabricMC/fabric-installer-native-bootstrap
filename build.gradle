@@ -22,6 +22,9 @@ publishing {
 			artifact (file("${projectDir}/target/${architecture}-pc-windows-msvc/release/fabric-installer-native-bootstrap.exe")) {
 				classifier = null
 			}
+			artifact (file("${projectDir}/target/${architecture}-pc-windows-msvc/release/fabric_installer_native_bootstrap.pdb")) {
+            	classifier = "pdb"
+            }
 		}
 	}
 
