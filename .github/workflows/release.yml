@@ -5,7 +5,7 @@ jobs:
     strategy:
       matrix:
         target: [ x86_64, i686, aarch64 ]
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
       - run: rustup target add ${{ matrix.target }}-pc-windows-msvc
@@ -13,7 +13,9 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: Artifacts ${{ matrix.target }}
-          path: target/${{ matrix.target }}-pc-windows-msvc/release/fabric-installer-native-bootstrap.exe
+          path: |
+            target/${{ matrix.target }}-pc-windows-msvc/release/fabric-installer-native-bootstrap.exe
+            target/${{ matrix.target }}-pc-windows-msvc/release/fabric-installer-native-bootstrap.pdb
       - run: gradle publish --stacktrace
         env:
           MAVEN_URL: ${{ secrets.MAVEN_URL }}
