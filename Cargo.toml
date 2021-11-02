@@ -19,4 +19,4 @@ features = [
 ]
 
 [build-dependencies]
-winres = "0.1.11"
+winres = "0.1.12"
