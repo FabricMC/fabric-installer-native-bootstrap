@@ -15,4 +15,4 @@ jobs:
           name: Artifacts ${{ matrix.target }}
           path: |
             target/${{ matrix.target }}-pc-windows-msvc/release/fabric-installer-native-bootstrap.exe
-            target/${{ matrix.target }}-pc-windows-msvc/release/fabric-installer-native-bootstrap.pdb
+            target/${{ matrix.target }}-pc-windows-msvc/release/fabric_installer_native_bootstrap.pdb
