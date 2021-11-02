@@ -35,12 +35,23 @@ const REG_HIVE: HKEY = HKEY_CURRENT_USER;
 const REG_PATH: &str = r"SOFTWARE\Mojang\InstalledProducts\Minecraft Launcher";
 const REG_KEY: &str = "InstallLocation";
 
+// This appears to be the same across devices.
+const UWP_PATH: &str = "Packages/Microsoft.4297127D64EC6_8wekyb3d8bbwe/LocalCache/Local/Microsoft/WritablePackageRoot";
+
 fn main() {
+    // Win32 launcher
     if let Ok(dir) = get_minecraft_installation_dir() {
         println!("Minecraft install dir {}", dir.display());
         try_minecraft_java(&dir);
     } else {
         println!("Could not find minecraft install dir.");
+    }
+
+    // UWP launcher
+    if let Some(val) = env::var_os("LOCALAPPDATA") {
+        let mut path = PathBuf::from(val);
+        path.push(UWP_PATH);
+        try_minecraft_java(&path);
     }
 
     if let Some(val) = env::var_os("JAVA_HOME") {
