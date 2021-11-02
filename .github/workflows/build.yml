@@ -4,7 +4,7 @@ jobs:
   build:
     strategy:
       matrix:
-        target: [ x86_64, i686, aarch64 ]
+        target: [ i686 ]
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
