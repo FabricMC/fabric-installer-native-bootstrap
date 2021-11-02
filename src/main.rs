@@ -8,7 +8,6 @@ use std::ffi::c_void;
 use std::io::Error;
 use std::path::{PathBuf, Path};
 use std::ptr::null_mut;
-use path_slash::PathBufExt;
 use windows::{
     Win32::{
         UI::{
@@ -98,6 +97,8 @@ fn get_minecraft_installation_dir() -> Result<PathBuf, Error> {
         return Err(Error::from_raw_os_error(ret_code.0));
     }
 
+    buffer.resize((data_size / 2 - 1) as usize, 0);
+
     ret_code = unsafe {
         RegGetValueW(
             REG_HIVE,
@@ -115,11 +116,11 @@ fn get_minecraft_installation_dir() -> Result<PathBuf, Error> {
     }
 
     // Remove \0
-    buffer.resize((data_size / 2 - 1) as usize, 0);
+    buffer.resize(buffer.len() - 1, 0);
 
     let data = String::from_utf16(&buffer).expect("could not convert data");
 
-    return Ok(PathBuf::from_slash(data));
+    return Ok(PathBuf::from(data));
 }
 
 fn launch_if_valid_java_installation<P: AsRef<Path>>(path: P) {

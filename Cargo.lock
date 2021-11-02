@@ -6,16 +6,9 @@ version = 3
 name = "fabric-installer-native-bootstrap"
 version = "0.1.6"
 dependencies = [
- "path-slash",
  "windows",
  "winres",
 ]
-
-[[package]]
-name = "path-slash"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3cacbb3c4ff353b534a67fb8d7524d00229da4cb1dc8c79f4db96e375ab5b619"
 
 [[package]]
 name = "serde"
