@@ -2,15 +2,39 @@
 // See RFC 1665 for additional details
 #![windows_subsystem = "windows"]
 
-use winreg::RegKey;
 use std::process::{Command, exit};
-use std::io::Result;
 use std::env;
-use native_dialog::MessageDialog;
-use native_dialog::MessageType;
-use webbrowser;
+use std::ffi::c_void;
+use std::io::Error;
 use std::path::{PathBuf, Path};
+use std::ptr::null_mut;
 use path_slash::PathBufExt;
+use windows::{
+    Win32::{
+        UI::{
+            Shell::ShellExecuteW,
+            WindowsAndMessaging::{
+                MessageBoxW,
+                SW_SHOW, MB_ICONINFORMATION, MB_YESNO, IDYES,
+            },
+        },
+        System::Registry::{
+            RegGetValueW,
+            HKEY,
+            HKEY_CURRENT_USER, RRF_RT_REG_SZ,
+        },
+        Foundation::{
+            ERROR_SUCCESS
+        },
+    }
+};
+
+const MB_TILE: &str = "Fabric Installer";
+const MB_BODY: &str = "The Fabric Installer could not find a valid Java installation.\n\nWould you like to open the Fabric wiki to find out how to fix this?\n\nURL: https://fabricmc.net/wiki/player:tutorials:java:windows";
+
+const REG_HIVE: HKEY = HKEY_CURRENT_USER;
+const REG_PATH: &str = r"SOFTWARE\Mojang\InstalledProducts\Minecraft Launcher";
+const REG_KEY: &str = "InstallLocation";
 
 fn main() {
     if let Ok(dir) = get_minecraft_installation_dir() {
@@ -20,14 +44,14 @@ fn main() {
         println!("Could not find minecraft install dir.");
     }
 
-    // if let Some(val) = env::var_os("JAVA_HOME") {
-    //     let mut path = PathBuf::from(val);
-    //     path.push("bin/javaw.exe");
-    //     launch_if_valid_java_installation(&path)
-    // }
+    if let Some(val) = env::var_os("JAVA_HOME") {
+        let mut path = PathBuf::from(val);
+        path.push("bin/javaw.exe");
+        launch_if_valid_java_installation(&path)
+    }
 
-    // // Getting thin on the ground, lets check the path.
-    // launch_if_valid_java_installation("javaw");
+    // Getting thin on the ground, lets check the path.
+    launch_if_valid_java_installation("javaw");
 
     show_error();
 }
@@ -55,11 +79,47 @@ fn try_minecraft_java<P: AsRef<Path>>(dir: P) -> bool {
     false
 }
 
-fn get_minecraft_installation_dir() -> Result<PathBuf> {
-    let hcu = RegKey::predef(winreg::enums::HKEY_CURRENT_USER);
-    let launcher = hcu.open_subkey(r"SOFTWARE\Mojang\InstalledProducts\Minecraft Launcher")?;
-    let install_location: Result<String> = launcher.get_value("InstallLocation");
-    return install_location.map(|s| PathBuf::from_slash(s))
+fn get_minecraft_installation_dir() -> Result<PathBuf, Error> {
+    let mut buffer: Vec<u16> = vec![0; 256];
+    let mut data_size: u32 = buffer.capacity() as u32;
+    let mut ret_code = unsafe {
+        RegGetValueW(
+            REG_HIVE,
+            REG_PATH,
+            REG_KEY,
+            RRF_RT_REG_SZ,
+            null_mut(),
+            null_mut(),
+            &mut data_size,
+        )
+    };
+
+    if ret_code.0 != ERROR_SUCCESS.0 as i32 {
+        return Err(Error::from_raw_os_error(ret_code.0));
+    }
+
+    ret_code = unsafe {
+        RegGetValueW(
+            REG_HIVE,
+            REG_PATH,
+            REG_KEY,
+            RRF_RT_REG_SZ,
+            null_mut(),
+            buffer.as_mut_ptr() as *mut c_void,
+            &mut data_size,
+        )
+    };
+
+    if ret_code.0 != ERROR_SUCCESS.0 as i32 {
+        return Err(Error::from_raw_os_error(ret_code.0));
+    }
+
+    // Remove \0
+    buffer.resize((data_size / 2 - 1) as usize, 0);
+
+    let data = String::from_utf16(&buffer).expect("could not convert data");
+
+    return Ok(PathBuf::from_slash(data));
 }
 
 fn launch_if_valid_java_installation<P: AsRef<Path>>(path: P) {
@@ -81,7 +141,7 @@ fn launch_if_valid_java_installation<P: AsRef<Path>>(path: P) {
             Some(code) => exit(code),
             None => {
                 unimplemented!("No signal handling implemented")
-            },
+            }
         }
     }
 
@@ -106,16 +166,26 @@ fn is_valid_java_installation<P: AsRef<Path>>(path: P) -> bool {
 }
 
 fn show_error() -> ! {
-    let open = MessageDialog::new()
-        .set_type(MessageType::Error)
-        .set_title("Fabric Installer")
-        .set_text("The Fabric Installer could not find a valid Java installation installed by Minecraft.\n\nPlease install and launch Minecraft, or try the universal '.jar' Fabric installer.\n\nWould you like to open the Fabric wiki for more help?\n\nURL: https://fabricmc.net/wiki/player:tutorials:java:windows")
-        .show_confirm()
-        .expect("Failed to show dialog");
+    let result = unsafe {
+        MessageBoxW(
+            None,
+            MB_BODY,
+            MB_TILE,
+            MB_ICONINFORMATION | MB_YESNO,
+        )
+    };
 
-    if open {
-        webbrowser::open("https://fabricmc.net/wiki/player:tutorials:java:windows")
-            .expect("Failed to open browser");
+    if result == IDYES {
+        unsafe {
+            ShellExecuteW(
+                None,
+                None,
+                "https://fabricmc.net/wiki/player:tutorials:java:windows",
+                None,
+                None,
+                SW_SHOW.0 as i32,
+            );
+        };
     }
 
     // Graceful exit otherwise windows may show additional help
