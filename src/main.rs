@@ -36,7 +36,7 @@ const REG_PATH: &str = r"SOFTWARE\Mojang\InstalledProducts\Minecraft Launcher";
 const REG_KEY: &str = "InstallLocation";
 
 // This appears to be the same across devices.
-const UWP_PATH: &str = "Packages/Microsoft.4297127D64EC6_8wekyb3d8bbwe/LocalCache/Local/Microsoft/WritablePackageRoot";
+const UWP_PATH: &str = "Packages/Microsoft.4297127D64EC6_8wekyb3d8bbwe/LocalCache/Local/";
 
 fn main() {
     // Win32 launcher
@@ -70,6 +70,8 @@ fn try_minecraft_java<P: AsRef<Path>>(dir: P) -> bool {
     let dir = dir.as_ref();
 
     let paths = [
+        r"runtime\java-runtime-beta\windows-x64\java-runtime-beta\bin\javaw.exe",
+        r"runtime\java-runtime-beta\windows-x86\java-runtime-beta\bin\javaw.exe",
         r"runtime\java-runtime-alpha\windows-x64\java-runtime-alpha\bin\javaw.exe",
         r"runtime\java-runtime-alpha\windows-x86\java-runtime-alpha\bin\javaw.exe",
         r"runtime\jre-legacy\windows-x64\jre-legacy\bin\javaw.exe",
