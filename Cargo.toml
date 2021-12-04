@@ -1,6 +1,6 @@
 [package]
 name = "fabric-installer-native-bootstrap"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["modmuss50 <modmuss50@gmail.com>"]
 edition = "2018"
 
