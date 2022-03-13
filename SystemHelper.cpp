@@ -75,7 +75,7 @@ void SystemHelper::showErrorMessage(const std::wstring& title, const std::wstrin
 	}
 }
 
-DWORD SystemHelper::createProcess(const std::wstring& path, std::vector<std::wstring> args)
+DWORD SystemHelper::createProcess(std::vector<std::wstring> args)
 {
 	STARTUPINFOW info;
 	PROCESS_INFORMATION processInfo;
@@ -85,18 +85,18 @@ DWORD SystemHelper::createProcess(const std::wstring& path, std::vector<std::wst
 
 	std::wstringstream cls;
 	for (auto& arg : args) {
-		cls << L"\"" << arg << L"\"";
+		cls << L"\"" << arg << L"\" ";
 	}
 	std::wstring commandLine = cls.str();
 
 	// Create the child process
 	if (::CreateProcessW(
-		path.c_str(),
+		nullptr,
 		commandLine.data(),
 		nullptr,
 		nullptr,
 		false,
-		0,
+		CREATE_DEFAULT_ERROR_MODE,
 		nullptr,
 		nullptr,
 		&info,
