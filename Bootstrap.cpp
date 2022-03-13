@@ -41,10 +41,18 @@ void Bootstrap::launch() {
 
 bool Bootstrap::launchMinecraftLauncher() {
 	if (auto minecraftLauncherPath = systemHelper->getRegValue(HKEY_CURRENT_USER, MC_LAUNCH_REG_PATH, MC_LAUNCH_REG_KEY); minecraftLauncherPath) {
-		std::wcout << "Found Minecraft launcher path: " << minecraftLauncherPath.value() << std::endl;
+		std::wstring installPath = minecraftLauncherPath.value();
+
+		// This is weird, on my tests machine the reg key value is just "C:\Program Files (x86)\"
+		if (!installPath.ends_with(LR"(Minecraft Launcher\)")) {
+			installPath = installPath + LR"(Minecraft Launcher\)";
+			std::wcout << "Install path did not appear to be Minecraft, appending guess." << std::endl;
+		}
+
+		std::wcout << "Found Minecraft launcher installation path: " << installPath << std::endl;
 
 		for (const LPCWSTR path : MC_JAVA_PATHS) {
-			const std::wstring fullPath = minecraftLauncherPath.value() + path;
+			const std::wstring fullPath = installPath + path;
 			if (attemptLaunch(fullPath, true)) {
 				return true;
 			}
@@ -77,8 +85,8 @@ bool Bootstrap::launchMinecraftLauncher() {
 
 bool Bootstrap::launchSystemJava() {
 	// Check %JAVA_HOME% for system java
-	if (auto localAppData = systemHelper->getEnvVar(L"JAVA_HOME"); localAppData) {
-		std::wstring path = localAppData.value() + LR"(bin\javaw.exe)";
+	if (auto javaHome = systemHelper->getEnvVar(L"JAVA_HOME"); javaHome) {
+		std::wstring path = javaHome.value() + LR"(bin\javaw.exe)";
 		if (attemptLaunch(path, true)) {
 			return true;
 		}
@@ -87,7 +95,7 @@ bool Bootstrap::launchSystemJava() {
 		std::wcout << "Could not find JAVA_HOME env var" << std::endl;
 	}
 
-	std::wcout << "Trying system java" << std::endl;
+	std::wcout << "Trying java on the path" << std::endl;
 	return attemptLaunch(L"javaw.exe", false);
 }
 
