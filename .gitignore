@@ -4,11 +4,12 @@
 !/res
 !/platform
 !/.github
-!/.cargo
 
 !.gitignore
-!Cargo.toml
-!Cargo.lock
-!build.rs
+!*.cpp
+!*.h
+!*.sln
+!*.vcxproj
+!*.filters
 !LICENSE
 !build.gradle
