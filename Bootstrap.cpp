@@ -13,7 +13,9 @@ constexpr LPCWSTR MC_LAUNCH_REG_KEY = L"InstallLocation";
 static const LPCWSTR UWP_PATH = LR"(\Packages\Microsoft.4297127D64EC6_8wekyb3d8bbwe\LocalCache\Local\)";
 
 static const std::vector<LPCWSTR> MC_JAVA_PATHS = {
-	LR"(runtime\java-runtime-beta\windows-x64\java-runtime-beta\bin\javaw.exe)", // Java 17
+	LR"(runtime\java-runtime-gamma\windows-x64\java-runtime-gamma\bin\javaw.exe)", // Java 17.0.3
+	LR"(runtime\java-runtime-gamma\windows-x86\java-runtime-gamma\bin\javaw.exe)",
+	LR"(runtime\java-runtime-beta\windows-x64\java-runtime-beta\bin\javaw.exe)", // Java 17.0.1
 	LR"(runtime\java-runtime-beta\windows-x86\java-runtime-beta\bin\javaw.exe)",
 	LR"(runtime\java-runtime-alpha\windows-x64\java-runtime-alpha\bin\javaw.exe)", // Java 16
 	LR"(runtime\java-runtime-alpha\windows-x86\java-runtime-alpha\bin\javaw.exe)",
