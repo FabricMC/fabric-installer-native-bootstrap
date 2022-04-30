@@ -11,5 +11,9 @@
 !*.sln
 !*.vcxproj
 !*.filters
+!*.ico
+!*.rc
+!*.manifest
+
 !LICENSE
 !build.gradle

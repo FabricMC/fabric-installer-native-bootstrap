@@ -2,17 +2,16 @@ name: Build
 on: [push, pull_request]
 jobs:
   build:
-    strategy:
-      matrix:
-        target: [ i686 ]
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
-      - run: rustup target add ${{ matrix.target }}-pc-windows-msvc
-      - run: cargo build --release --target ${{ matrix.target }}-pc-windows-msvc
+      - uses: microsoft/setup-msbuild@v1.1
+        with:
+          msbuild-architecture: x86
+      - run: msbuild.exe fabric-installer-native-bootstrap.sln /property:Configuration=Release
       - uses: actions/upload-artifact@v2
         with:
           name: Artifacts ${{ matrix.target }}
           path: |
-            target/${{ matrix.target }}-pc-windows-msvc/release/fabric-installer-native-bootstrap.exe
-            target/${{ matrix.target }}-pc-windows-msvc/release/fabric_installer_native_bootstrap.pdb
+            Release/fabric-installer-native-bootstrap.exe
+            Release/fabric_installer_native_bootstrap.pdb
