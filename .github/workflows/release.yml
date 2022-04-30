@@ -10,7 +10,7 @@ jobs:
       - run: msbuild.exe fabric-installer-native-bootstrap.sln /property:Configuration=Release /p:Platform=Win32
       - uses: actions/upload-artifact@v2
         with:
-          name: Artifacts ${{ matrix.target }}
+          name: Artifacts Win32
           path: |
             Release/fabric-installer-native-bootstrap.exe
             Release/fabric_installer_native_bootstrap.pdb
