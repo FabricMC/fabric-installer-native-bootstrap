@@ -161,15 +161,15 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Bootstrap.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="SystemHelper.cpp" />
+    <ClCompile Include="src\Bootstrap.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\SystemHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bootstrap.h" />
-    <ClInclude Include="ISystemHelper.h" />
+    <ClInclude Include="src\Bootstrap.h" />
+    <ClInclude Include="src\ISystemHelper.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="SystemHelper.h" />
+    <ClInclude Include="src\SystemHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="fabric-installer-native-bootstrap.rc" />

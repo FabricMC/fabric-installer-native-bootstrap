@@ -15,24 +15,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Bootstrap.cpp">
+    <ClCompile Include="src\Bootstrap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SystemHelper.cpp">
+    <ClCompile Include="src\SystemHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bootstrap.h">
+    <ClInclude Include="src\Bootstrap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ISystemHelper.h">
+    <ClInclude Include="src\ISystemHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SystemHelper.h">
+    <ClInclude Include="src\SystemHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
