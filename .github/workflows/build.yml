@@ -2,16 +2,19 @@ name: Build
 on: [push, pull_request]
 jobs:
   build:
+    strategy:
+      matrix:
+        platform: [ x64, Win32 ]
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
       - uses: microsoft/setup-msbuild@v1.1
         with:
-          msbuild-architecture: x86
-      - run: msbuild.exe fabric-installer-native-bootstrap.sln /property:Configuration=Release
+          msbuild-architecture: x64
+      - run: msbuild.exe fabric-installer-native-bootstrap.sln /property:Configuration=Release /p:Platform=${{ matrix.platform }}
       - uses: actions/upload-artifact@v2
         with:
           name: Artifacts ${{ matrix.target }}
           path: |
-            Release/fabric-installer-native-bootstrap.exe
-            Release/fabric_installer_native_bootstrap.pdb
+            ${{ matrix.platform }}/Release/fabric-installer-native-bootstrap.exe
+            ${{ matrix.platform }}/Release/fabric_installer_native_bootstrap.pdb

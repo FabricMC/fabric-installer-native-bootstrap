@@ -6,8 +6,8 @@ jobs:
     steps:
       - uses: microsoft/setup-msbuild@v1.1
         with:
-          msbuild-architecture: x86
-      - run: msbuild.exe fabric-installer-native-bootstrap.sln /property:Configuration=Release
+          msbuild-architecture: x64
+      - run: msbuild.exe fabric-installer-native-bootstrap.sln /property:Configuration=Release /p:Platform=Win32
       - uses: actions/upload-artifact@v2
         with:
           name: Artifacts ${{ matrix.target }}
