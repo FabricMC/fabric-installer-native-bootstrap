@@ -17,7 +17,7 @@ publishing {
 			artifact (file("${projectDir}/Win32/Release/fabric-installer-native-bootstrap.exe")) {
 				classifier = null
 			}
-			artifact (file("${projectDir}/Win32/Release/fabric_installer_native_bootstrap.pdb")) {
+			artifact (file("${projectDir}/Win32/Release/fabric-installer-native-bootstrap.pdb")) {
             	classifier = "pdb"
             }
 		}
