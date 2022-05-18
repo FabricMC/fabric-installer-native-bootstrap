@@ -17,4 +17,4 @@ jobs:
           name: Artifacts ${{ matrix.platform }}
           path: |
             ${{ matrix.platform }}/Release/fabric-installer-native-bootstrap.exe
-            ${{ matrix.platform }}/Release/fabric_installer_native_bootstrap.pdb
+            ${{ matrix.platform }}/Release/fabric-installer-native-bootstrap.pdb

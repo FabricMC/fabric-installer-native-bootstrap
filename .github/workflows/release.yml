@@ -13,8 +13,8 @@ jobs:
         with:
           name: Artifacts Win32
           path: |
-            Release/fabric-installer-native-bootstrap.exe
-            Release/fabric_installer_native_bootstrap.pdb
+            Win32/Release/fabric-installer-native-bootstrap.exe
+            Win32/Release/fabric-installer-native-bootstrap.pdb
       - run: gradle publish --stacktrace
         env:
           MAVEN_URL: ${{ secrets.MAVEN_URL }}
