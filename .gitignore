@@ -1,8 +1,10 @@
 .vs
 .gradle
 .vscode
+.idea
 build
 ninja
+cmake-build-debug
 
 ARM64
 Win32
