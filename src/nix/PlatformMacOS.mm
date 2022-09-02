@@ -17,7 +17,7 @@ void ShowMessageBox() {
 
     // Force the alert to the top
     auto panel = static_cast<NSPanel*>([alert window]);
-    panel.floatingPanel = YES;
+    [panel setFloatingPanel:YES];
 
     if ([alert runModal] == NSAlertFirstButtonReturn) {
         [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:Str(ERROR_URL)]];
