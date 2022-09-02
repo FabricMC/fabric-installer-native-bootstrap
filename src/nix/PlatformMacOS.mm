@@ -8,12 +8,12 @@ NSString* Str(LPCWSTR str) {
 }
 
 void ShowMessageBox() {
-    NSAlert *alert = [[NSAlert alloc] init];
+    auto *alert = [[NSAlert alloc] init];
     [alert addButtonWithTitle:@"Yes"];
     [alert addButtonWithTitle:@"No"];
     [alert setMessageText:Str(ERROR_TITLE)];
     [alert setInformativeText:Str(ERROR_MESSAGE)];
-    [alert setAlertStyle:NSWarningAlertStyle];
+    [alert setAlertStyle:NSCriticalAlertStyle];
 
     // Force the alert to the top
     auto panel = static_cast<NSPanel*>([alert window]);
