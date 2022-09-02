@@ -17,6 +17,11 @@ endif()
 
 add_executable(fabric-installer-native-bootstrap src/nix/main.cpp ${PLATFORM_IMPL})
 
+if(UNIX AND NOT APPLE)
+    # Static link
+    target_link_libraries(fabric-installer-native-bootstrap -static)
+endif()
+
 if(APPLE)
     target_link_libraries(fabric-installer-native-bootstrap "-framework Cocoa")
 endif()

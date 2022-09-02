@@ -1,5 +1,7 @@
 #pragma once
 
-#include <string>
+#include <filesystem>
 
 void ShowMessageBox();
+
+bool TryLaunchJava(const std::filesystem::path& path);

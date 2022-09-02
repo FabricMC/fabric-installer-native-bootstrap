@@ -23,3 +23,5 @@ void ShowMessageBox() {
         [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:Str(ERROR_URL)]];
     }
 }
+
+bool TryLaunchJava(const std::filesystem::path& path) {}
