@@ -3,23 +3,38 @@ plugins {
 	id 'maven-publish'
 }
 
-version = "0.3.2"
-
 def ENV = System.getenv()
+def OS = System.getProperty("os.name").toLowerCase();
+
+version = "0.3.2" + (ENV.CI ? "" : "+local")
 
 publishing {
 	publications {
 		maven(MavenPublication) {
 			groupId "net.fabricmc.fabric-installer-native-bootstrap"
-			artifactId "${ENV.ARTIFACT_ID}-${ENV.PLATFORM}"
 			version project.version
 
-			artifact (file("${projectDir}/${ENV.PLATFORM}/Release/fabric-installer-native-bootstrap.exe")) {
-				classifier = null
+			if (OS.contains("win")) {
+				artifactId "windows-${ENV.PLATFORM}"
+
+				artifact (file("${projectDir}/${ENV.PLATFORM}/Release/fabric-installer-native-bootstrap.exe")) {
+					classifier = null
+				}
+				artifact (file("${projectDir}/${ENV.PLATFORM}/Release/fabric-installer-native-bootstrap.pdb")) {
+					classifier = "pdb"
+				}
+			} else {
+				if (OS.contains("mac")) {
+					artifactId "macos-x86_64-arm64"
+				} else {
+					// No linux ARM build yet as there is no way to run the Vanilla launcher on it.
+					artifactId "linux-x64"
+				}
+
+				artifact (file("${projectDir}/fabric-installer-native-bootstrap")) {
+					classifier = null
+				}
 			}
-			artifact (file("${projectDir}/${ENV.PLATFORM}/Release/fabric-installer-native-bootstrap.pdb")) {
-            	classifier = "pdb"
-            }
 		}
 	}
 

@@ -1,7 +1,12 @@
 .vs
 .gradle
+.vscode
+build
+ninja
 
 ARM64
 Win32
 x64
 *.vcxproj.user
+*.dSYM
+fabric-installer-native-bootstrap
