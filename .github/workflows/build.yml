@@ -1,7 +1,7 @@
 name: Build
 on: [push, pull_request]
 jobs:
-  build:
+  build-windows:
     strategy:
       matrix:
         platform: [ x64, Win32, ARM64 ]

@@ -15,24 +15,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Bootstrap.cpp">
+    <ClCompile Include="Bootstrap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\main.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SystemHelper.cpp">
+    <ClCompile Include="SystemHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Bootstrap.h">
+    <ClInclude Include="Bootstrap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ISystemHelper.h">
+    <ClInclude Include="ISystemHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SystemHelper.h">
+    <ClInclude Include="SystemHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
@@ -45,7 +45,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon.ico">
+    <Image Include="..\..\icon.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

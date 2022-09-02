@@ -237,21 +237,21 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Bootstrap.cpp" />
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\SystemHelper.cpp" />
+    <ClCompile Include="Bootstrap.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="SystemHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Bootstrap.h" />
-    <ClInclude Include="src\ISystemHelper.h" />
+    <ClInclude Include="Bootstrap.h" />
+    <ClInclude Include="ISystemHelper.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="src\SystemHelper.h" />
+    <ClInclude Include="SystemHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="fabric-installer-native-bootstrap.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon.ico" />
+    <Image Include="..\..\icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

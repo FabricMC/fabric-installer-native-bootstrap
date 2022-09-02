@@ -1,22 +1,27 @@
 name: Release
 on: [workflow_dispatch] # Manual trigger
 jobs:
-  build:
+  build-windows:
     runs-on: windows-2022
+    strategy:
+      matrix:
+        platform: [ x64, Win32, ARM64 ]
     steps:
       - uses: actions/checkout@v2
       - uses: microsoft/setup-msbuild@v1.1
         with:
           msbuild-architecture: x64
-      - run: msbuild.exe fabric-installer-native-bootstrap.sln /property:Configuration=Release /p:Platform=Win32
+      - run: msbuild.exe fabric-installer-native-bootstrap.sln /property:Configuration=Release /p:Platform=${{ matrix.platform }}
       - uses: actions/upload-artifact@v2
         with:
-          name: Artifacts Win32
+          name: Artifacts Windows - ${{ matrix.platform }}
           path: |
-            Win32/Release/fabric-installer-native-bootstrap.exe
-            Win32/Release/fabric-installer-native-bootstrap.pdb
+            ${{ matrix.platform }}/Release/fabric-installer-native-bootstrap.exe
+            ${{ matrix.platform }}/Release/fabric-installer-native-bootstrap.pdb
       - run: gradle publish --stacktrace
         env:
           MAVEN_URL: ${{ secrets.MAVEN_URL }}
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+          ARTIFACT_ID: windows
+          PLATFORM: ${{ matrix.platform }}

@@ -1,19 +1,7 @@
-/*
+.vs
+.gradle
 
-!/src
-!/res
-!/platform
-!/.github
-
-!.gitignore
-!*.cpp
-!*.h
-!*.sln
-!*.vcxproj
-!*.filters
-!*.ico
-!*.rc
-!*.manifest
-
-!LICENSE
-!build.gradle
+ARM64
+Win32
+x64
+*.vcxproj.user

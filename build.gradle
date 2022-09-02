@@ -11,13 +11,13 @@ publishing {
 	publications {
 		maven(MavenPublication) {
 			groupId "net.fabricmc.fabric-installer-native-bootstrap"
-			artifactId "windows-i686"
+			artifactId "${ENV.ARTIFACT_ID}-${ENV.PLATFORM}"
 			version project.version
 
-			artifact (file("${projectDir}/Win32/Release/fabric-installer-native-bootstrap.exe")) {
+			artifact (file("${projectDir}/${ENV.PLATFORM}/Release/fabric-installer-native-bootstrap.exe")) {
 				classifier = null
 			}
-			artifact (file("${projectDir}/Win32/Release/fabric-installer-native-bootstrap.pdb")) {
+			artifact (file("${projectDir}/${ENV.PLATFORM}/Release/fabric-installer-native-bootstrap.pdb")) {
             	classifier = "pdb"
             }
 		}
