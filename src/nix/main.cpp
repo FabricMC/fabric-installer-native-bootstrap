@@ -3,12 +3,12 @@
 #include "Platform.h"
 #include "../SharedConstants.h"
 
-int main(int argc, char *argv[])
+int main([[maybe_unused]] int argc,[[maybe_unused]]  char *argv[])
 {
-    const auto home = std::filesystem::path(getenv("HOME"));
+    const auto HOME = std::filesystem::path(getenv("HOME"));
 
 #if __linux__
-    const std::filesystem::path runtime = home / ".var" / "app" / "com.mojang.Minecraft" / ".minecraft";
+    const std::filesystem::path runtime = HOME / ".var" / "app" / "com.mojang.Minecraft" / ".minecraft";
 
     if (std::filesystem::exists(runtime)) {
         for (const LPCWSTR path : MC_JAVA_PATHS_LINUX) {
@@ -26,14 +26,24 @@ int main(int argc, char *argv[])
             }
         }
     }
-
 #elif __APPLE__
-    // TODO MacOS impl.
+    // TODO MacOS impl?
 #endif
+    const auto JAVA_HOME = getenv("JAVA_HOME");
 
-    const auto JAVA_HOME = std::filesystem::path(getenv("JAVA_HOME"));
-    // TODO try JAVA_HOME
-    // TODO try path.
+    if (JAVA_HOME != nullptr) {
+        if (TryLaunchJava(std::filesystem::path(JAVA_HOME) / "bin" / "java")) {
+            // Successful launch using JAVA_HOME
+            return 0;
+        }
+    }
 
+    if (TryLaunchJava("java")) {
+        // Successful launch using java on the path!
+        return 0;
+    }
+
+    // Unable to launch, show message box.
     ShowMessageBox();
+    return 1;
 }

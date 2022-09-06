@@ -13,6 +13,7 @@ std::wstring_convert<convert_type, wchar_t> converter;
 void ShowMessageBox() {
     bool openHelp = false;
 
+    // TODO possibly use https://sourceforge.net/projects/tinyfiledialogs/ for better support
     if (::system("zenity --version") == 0) {
         // zenity installed, use it to display a dialog
         std::wstringstream ss;
@@ -38,7 +39,8 @@ void ShowMessageBox() {
 
 std::filesystem::path GetSelf() {
     char buff[PATH_MAX];
-    ssize_t len = ::readlink("/proc/self/exe", buff, sizeof(buff)-1);
+    const auto len = ::readlink("/proc/self/exe", buff, sizeof(buff)-1);
+
     if (len != -1) {
         buff[len] = '\0';
         return {buff};
