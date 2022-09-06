@@ -6,7 +6,7 @@ plugins {
 def ENV = System.getenv()
 def OS = System.getProperty("os.name").toLowerCase();
 
-version = "0.3.2" + (ENV.CI ? "" : "+local")
+version = "0.4.0" + (ENV.CI ? "" : "+local")
 
 publishing {
 	publications {
