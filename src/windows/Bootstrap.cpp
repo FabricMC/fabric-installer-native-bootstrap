@@ -36,7 +36,7 @@ bool Bootstrap::launchMinecraftLauncher() {
 
 		std::wcout << "Found Minecraft launcher installation path: " << installPath << std::endl;
 
-		for (const LPCWSTR path : MC_JAVA_PATHS_WIN) {
+		for (auto& path : MC_JAVA_PATHS_WIN) {
 			const std::wstring fullPath = installPath + path + L"javaw.exe";
 			if (attemptLaunch(fullPath, true)) {
 				return true;
@@ -52,7 +52,7 @@ bool Bootstrap::launchMinecraftLauncher() {
 		std::wstring launcherPath = localAppData.value() + UWP_PATH;
 
 		if (systemHelper->dirExists(launcherPath)) {
-			for (const LPCWSTR path : MC_JAVA_PATHS_WIN) {
+			for (auto& path : MC_JAVA_PATHS_WIN) {
 				if (attemptLaunch(launcherPath + path + L"javaw.exe", true)) {
 					return true;
 				}

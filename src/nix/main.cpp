@@ -11,7 +11,7 @@ int main([[maybe_unused]] int argc,[[maybe_unused]]  char *argv[])
     const std::filesystem::path runtime = HOME / ".var" / "app" / "com.mojang.Minecraft" / ".minecraft";
 
     if (std::filesystem::exists(runtime)) {
-        for (const LPCWSTR path : MC_JAVA_PATHS_LINUX) {
+        for (auto& path : MC_JAVA_PATHS_LINUX) {
             const std::filesystem::path javaExe = runtime / path / "java";
 
             std::cout << "Searching for Java at: " << javaExe << std::endl;

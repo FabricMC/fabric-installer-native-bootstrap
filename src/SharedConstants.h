@@ -11,22 +11,44 @@ constexpr LPCWSTR ERROR_TITLE = L"Fabric Installer";
 constexpr LPCWSTR ERROR_MESSAGE = L"The Fabric Installer could not find a valid Java installation.\n\nWould you like to open the Fabric wiki to find out how to fix this?\n\nURL: https://fabricmc.net/wiki/player:tutorials:java:windows";
 constexpr LPCWSTR ERROR_URL = L"https://fabricmc.net/wiki/player:tutorials:java:windows";
 
-static const std::vector<LPCWSTR> MC_JAVA_PATHS_WIN = {
-	LR"(runtime/java-runtime-gamma/windows-x64/java-runtime-gamma/bin/)", // Java 17.0.3
-	LR"(runtime/java-runtime-gamma/windows-x86/java-runtime-gamma/bin/)",
-	LR"(runtime/java-runtime-beta/windows-x64/java-runtime-beta/bin/)", // Java 17.0.1
-	LR"(runtime/java-runtime-beta/windows-x86/java-runtime-beta/bin/)",
-	LR"(runtime/java-runtime-alpha/windows-x64/java-runtime-alpha/bin/)", // Java 16
-	LR"(runtime/java-runtime-alpha/windows-x86/java-runtime-alpha/bin/)",
-	LR"(runtime/jre-legacy/windows-x64/jre-legacy/bin/)", // Java 8 new location
-	LR"(runtime/jre-legacy/windows-x86/jre-legacy/bin/)",
-	LR"(runtime/jre-x64/bin/)", // Java 8 old location
-	LR"(runtime/jre-x86/bin/)",
+static const std::vector<std::wstring> MC_JAVA_NAMES = {
+        L"java-runtime-gamma",  // Java 17.0.3
+        L"java-runtime-beta",   // Java 17.0.1
+        L"java-runtime-alpha",  // Java 16
+        L"jre-legacy"           // Java 8
 };
 
-static const std::vector<LPCWSTR> MC_JAVA_PATHS_LINUX = {
-        LR"(runtime/java-runtime-gamma/linux/java-runtime-gamma/bin/)", // Java 17.0.3
-        LR"(runtime/java-runtime-beta/linux/java-runtime-beta/bin/)", // Java 17.0.1
-        LR"(runtime/java-runtime-alpha/linux/java-runtime-alpha/bin/)", // Java 16
-        LR"(runtime/jre-legacy/linux/jre-legacy/bin/)", // Java 8 new location
-};
+namespace {
+    void appendPlatform(std::vector<std::wstring>& vec, const std::wstring& platform) {
+        for (const auto& name : MC_JAVA_NAMES) {
+            std::wstring str;
+            str.append(LR"(runtime/)");
+            str.append(name);
+            str.append(platform);
+            str.append(LR"(/bin/)");
+
+            vec.emplace_back(str);
+        }
+    }
+
+    std::vector<std::wstring> BuildWindows() {
+        std::vector<std::wstring> vec;
+
+        appendPlatform(vec, L"windows-x64");
+        appendPlatform(vec, L"windows-x86");
+
+        // Java 8 old location
+        vec.emplace_back(LR"(runtime/jre-x64/bin/)");
+        vec.emplace_back(LR"(runtime/jre-x86/bin/)");
+        return vec;
+    }
+
+    std::vector<std::wstring> BuildLinux() {
+        std::vector<std::wstring> vec;
+        appendPlatform(vec, L"linux");
+        return vec;
+    }
+}
+
+static const std::vector<std::wstring> MC_JAVA_PATHS_WIN = BuildWindows();
+static const std::vector<std::wstring> MC_JAVA_PATHS_LINUX = BuildLinux();

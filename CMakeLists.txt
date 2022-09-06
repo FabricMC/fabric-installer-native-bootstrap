@@ -25,3 +25,10 @@ endif()
 if(APPLE)
     target_link_libraries(fabric-installer-native-bootstrap "-framework Cocoa")
 endif()
+
+# Warnings as errors.
+if(MSVC)
+    target_compile_options(fabric-installer-native-bootstrap PRIVATE /W4 /WX)
+else()
+    target_compile_options(fabric-installer-native-bootstrap PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
