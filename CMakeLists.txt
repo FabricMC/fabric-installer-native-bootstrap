@@ -29,6 +29,6 @@ endif()
 # Warnings as errors.
 if(MSVC)
     target_compile_options(fabric-installer-native-bootstrap PRIVATE /W4 /WX)
-else(NOT APPLE) # TODO: Fix MacOS warnings
+elseif(NOT APPLE) # TODO: Fix MacOS warnings
     target_compile_options(fabric-installer-native-bootstrap PRIVATE -Wall -Wextra -Wpedantic -Werror)
 endif()
