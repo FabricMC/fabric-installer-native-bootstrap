@@ -65,7 +65,9 @@ bool TryLaunchJava(const std::filesystem::path& path) {
     ss << " -jar " << GetSelf();
 
     // Ignore the return code for this, assume it worked as expected.
-    ::system(STR(ss));
+    if (::system(STR(ss)) != 0) {
+        std::cout << "Installer failed with a none 0 exit code.";
+    }
 
     return true;
 }
