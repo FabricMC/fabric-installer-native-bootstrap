@@ -5,16 +5,17 @@ jobs:
     strategy:
       matrix:
         platform: [ x64, Win32, ARM64 ]
+        configuration: [ Release, Debug ]
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
       - uses: microsoft/setup-msbuild@v1.1
         with:
           msbuild-architecture: x64
-      - run: msbuild.exe fabric-installer-native-bootstrap.sln /property:Configuration=Release /p:Platform=${{ matrix.platform }}
+      - run: msbuild.exe fabric-installer-native-bootstrap.sln /property:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}
       - uses: actions/upload-artifact@v2
         with:
-          name: Artifacts ${{ matrix.platform }}
+          name: Artifacts ${{ matrix.platform }} ${{ matrix.configuration }}
           path: |
-            ${{ matrix.platform }}/Release/fabric-installer-native-bootstrap.exe
-            ${{ matrix.platform }}/Release/fabric-installer-native-bootstrap.pdb
+            ${{ matrix.platform }}/${{ matrix.configuration }}/fabric-installer-native-bootstrap.exe
+            ${{ matrix.platform }}/${{ matrix.configuration }}/fabric-installer-native-bootstrap.pdb

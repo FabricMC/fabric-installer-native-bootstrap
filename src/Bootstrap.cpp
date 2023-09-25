@@ -3,27 +3,29 @@
 #include <iostream>
 #include <vector>
 
-constexpr LPCWSTR ERROR_TITLE = L"Fabric Installer";
-constexpr LPCWSTR ERROR_MESSAGE = L"The Fabric Installer could not find a valid Java installation.\n\nWould you like to open the Fabric wiki to find out how to fix this?\n\nURL: https://fabricmc.net/wiki/player:tutorials:java:windows";
-constexpr LPCWSTR ERROR_URL = L"https://fabricmc.net/wiki/player:tutorials:java:windows";
+namespace {
+	constexpr LPCWSTR ERROR_TITLE = L"Fabric Installer";
+	constexpr LPCWSTR ERROR_MESSAGE = L"The Fabric Installer could not find a valid Java installation.\n\nWould you like to open the Fabric wiki to find out how to fix this?\n\nURL: https://fabricmc.net/wiki/player:tutorials:java:windows";
+	constexpr LPCWSTR ERROR_URL = L"https://fabricmc.net/wiki/player:tutorials:java:windows";
 
-constexpr LPCWSTR MC_LAUNCH_REG_PATH = LR"(SOFTWARE\Mojang\InstalledProducts\Minecraft Launcher)";
-constexpr LPCWSTR MC_LAUNCH_REG_KEY = L"InstallLocation";
+	constexpr LPCWSTR MC_LAUNCH_REG_PATH = LR"(SOFTWARE\Mojang\InstalledProducts\Minecraft Launcher)";
+	constexpr LPCWSTR MC_LAUNCH_REG_KEY = L"InstallLocation";
 
-static const LPCWSTR UWP_PATH = LR"(\Packages\Microsoft.4297127D64EC6_8wekyb3d8bbwe\LocalCache\Local\)";
+	constexpr const LPCWSTR UWP_PATH = LR"(\Packages\Microsoft.4297127D64EC6_8wekyb3d8bbwe\LocalCache\Local\)";
 
-static const std::vector<LPCWSTR> MC_JAVA_PATHS = {
-	LR"(runtime\java-runtime-gamma\windows-x64\java-runtime-gamma\bin\javaw.exe)", // Java 17.0.3
-	LR"(runtime\java-runtime-gamma\windows-x86\java-runtime-gamma\bin\javaw.exe)",
-	LR"(runtime\java-runtime-beta\windows-x64\java-runtime-beta\bin\javaw.exe)", // Java 17.0.1
-	LR"(runtime\java-runtime-beta\windows-x86\java-runtime-beta\bin\javaw.exe)",
-	LR"(runtime\java-runtime-alpha\windows-x64\java-runtime-alpha\bin\javaw.exe)", // Java 16
-	LR"(runtime\java-runtime-alpha\windows-x86\java-runtime-alpha\bin\javaw.exe)",
-	LR"(runtime\jre-legacy\windows-x64\jre-legacy\bin\javaw.exe)", // Java 8 new location
-	LR"(runtime\jre-legacy\windows-x86\jre-legacy\bin\javaw.exe)",
-	LR"(runtime\jre-x64\bin\javaw.exe)", // Java 8 old location
-	LR"(runtime\jre-x86\bin\javaw.exe)",
-};
+	static const std::vector<LPCWSTR> MC_JAVA_PATHS = {
+		LR"(runtime\java-runtime-gamma\windows-x64\java-runtime-gamma\bin\javaw.exe)", // Java 17.0.8
+		LR"(runtime\java-runtime-gamma\windows-x86\java-runtime-gamma\bin\javaw.exe)",
+		LR"(runtime\java-runtime-beta\windows-x64\java-runtime-beta\bin\javaw.exe)", // Java 17.0.1
+		LR"(runtime\java-runtime-beta\windows-x86\java-runtime-beta\bin\javaw.exe)",
+		LR"(runtime\java-runtime-alpha\windows-x64\java-runtime-alpha\bin\javaw.exe)", // Java 16
+		LR"(runtime\java-runtime-alpha\windows-x86\java-runtime-alpha\bin\javaw.exe)",
+		LR"(runtime\jre-legacy\windows-x64\jre-legacy\bin\javaw.exe)", // Java 8 new location
+		LR"(runtime\jre-legacy\windows-x86\jre-legacy\bin\javaw.exe)",
+		LR"(runtime\jre-x64\bin\javaw.exe)", // Java 8 old location
+		LR"(runtime\jre-x86\bin\javaw.exe)",
+	};
+}
 
 Bootstrap::Bootstrap(const std::shared_ptr<ISystemHelper>& systemHelper) : systemHelper(systemHelper) {}
 
@@ -116,20 +118,18 @@ bool Bootstrap::attemptLaunch(const std::wstring& path, bool checkExists) {
 
 	std::wcout << "Testing for valid java @ (" << path << ")" << std::endl;
 	DWORD exit = systemHelper->createProcess({ path, L"-version" });
-	if (exit == 0) {
-		// -version returned a successful exit code.
-		std::wcout << "Found valid java @ (" << path << ")" << std::endl;
-
-		if (systemHelper->createProcess({ path, L"-jar", systemHelper->getBootstrapFilename(), L"-fabricInstallerBootstrap", L"true" }) != 0) {
-			// The installer returned a none 0 exit code, meaning that most likely the installer crashed.
-			throw std::runtime_error("Installer returned a none 0 exit code");
-		}
-
-		return true;
-	}
-	else {
+	if (exit != 0) {
 		std::wcout << "Java @ (" << path << ") returned an exit code of: " << std::to_wstring(exit) << std::endl;
+		return false;
 	}
 
-	return false;
+	std::wcout << "Found valid java @ (" << path << ")" << std::endl;
+
+	exit = systemHelper->createProcess({ path, L"-jar", systemHelper->getBootstrapFilename(), L"-fabricInstallerBootstrap", L"true" });
+	if (exit != 0) {
+		// The installer returned a none 0 exit code, meaning that most likely the installer crashed.
+		throw std::runtime_error("Installer returned a none 0 exit code: " + exit);
+	}
+
+	return true;
 }

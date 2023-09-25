@@ -19,8 +19,8 @@ std::optional<std::wstring> SystemHelper::getRegValue(HKEY hive, const std::wstr
 		return std::nullopt;
 	}
 
-	std::wstring data;
-	data.resize(dataSize / sizeof(wchar_t));
+	std::wstring value;
+	value.resize(dataSize / sizeof(wchar_t));
 
 	retCode = ::RegGetValueW(
 		hive,
@@ -28,7 +28,7 @@ std::optional<std::wstring> SystemHelper::getRegValue(HKEY hive, const std::wstr
 		key.c_str(),
 		RRF_RT_REG_SZ,
 		nullptr,
-		&data[0],
+		value.data(),
 		&dataSize
 	);
 
@@ -38,9 +38,8 @@ std::optional<std::wstring> SystemHelper::getRegValue(HKEY hive, const std::wstr
 
 	DWORD stringLengthInWchars = dataSize / sizeof(wchar_t);
 	stringLengthInWchars--; // Exclude the NUL written by the Win32 API
-	data.resize(stringLengthInWchars);
-
-	return data;
+	value.resize(stringLengthInWchars);
+	return value;
 }
 
 std::optional<std::wstring> SystemHelper::getEnvVar(const std::wstring& key)
@@ -53,7 +52,7 @@ std::optional<std::wstring> SystemHelper::getEnvVar(const std::wstring& key)
 
 	// Read the env var
 	std::wstring value(size, L'\0');
-	size = ::GetEnvironmentVariableW(key.c_str(), &value[0], size);
+	size = ::GetEnvironmentVariableW(key.c_str(), value.data(), size);
 	if (!size || size >= value.size()) {
 		return std::nullopt;
 	}
@@ -63,7 +62,7 @@ std::optional<std::wstring> SystemHelper::getEnvVar(const std::wstring& key)
 }
 
 void SystemHelper::showErrorMessage(const std::wstring& title, const std::wstring& message, const std::wstring& url) {
-	int result = MessageBoxW(
+	const int result = ::MessageBoxW(
 		nullptr,
 		message.c_str(),
 		title.c_str(),
@@ -71,7 +70,7 @@ void SystemHelper::showErrorMessage(const std::wstring& title, const std::wstrin
 	);
 
 	if (result == IDYES) {
-		ShellExecuteW(nullptr, nullptr, url.c_str(), nullptr, nullptr, SW_SHOW);
+		::ShellExecuteW(nullptr, nullptr, url.c_str(), nullptr, nullptr, SW_SHOW);
 	}
 }
 
@@ -117,7 +116,7 @@ DWORD SystemHelper::createProcess(std::vector<std::wstring> args)
 	}
 	else {
 		std::string msg = "Failed to create process: " + std::to_string(GetLastError());
-		return -1;
+		return 255;
 		//            throw std::exception(msg.c_str());
 	}
 }
