@@ -3,7 +3,6 @@
 #include "Logger.h"
 
 #include <stdexcept>
-#include <iostream>
 
 _Use_decl_annotations_ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
 	UNREFERENCED_PARAMETER(hInstance);
@@ -41,7 +40,6 @@ _Use_decl_annotations_ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevI
 	} catch (const std::runtime_error& error) {
 		logger.log(L"a runtime error occured:");
 		logger.log(error.what());
-		std::cout << error.what() << std::endl;
 		return 1;
 	}
 

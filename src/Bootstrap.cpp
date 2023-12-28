@@ -1,8 +1,6 @@
 #include "Bootstrap.h"
 
-#include <iostream>
 #include <vector>
-#include <map>
 #include <sstream>
 
 namespace {
@@ -146,7 +144,11 @@ const std::vector<std::wstring> Bootstrap::getMinecraftJavaPaths(const HostArchi
 	std::vector<std::wstring> paths;
 
 	for (const HostArchitecture::Value& arch : HostArchitecture::VALUES) {
-		if (arch < hostArch || arch == HostArchitecture::UNKNOWN) {
+		if (arch == HostArchitecture::UNKNOWN) {
+			continue;
+		}
+
+		if (arch < hostArch) {
 			// Skip arches that the host does not support.
 			// E.g: On x64 there is no need to go looking for arm64 JDKs as its never going to run.
 			logger.log(L"Arch not supported: " + HostArchitecture::AsString(arch));
