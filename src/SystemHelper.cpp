@@ -2,6 +2,7 @@
 
 #include <Shlwapi.h>
 #include <sstream>
+#include <chrono>
 
 std::optional<std::wstring> SystemHelper::getRegValue(HKEY hive, const std::wstring& path, const std::wstring& key) {
 	DWORD dataSize{};
@@ -135,4 +136,94 @@ std::wstring SystemHelper::getBootstrapFilename() {
 	wchar_t moduleFileName[MAX_PATH] = { 0 };
 	::GetModuleFileNameW(nullptr, moduleFileName, MAX_PATH);
 	return moduleFileName;
+}
+
+std::wstring SystemHelper::getTempDir()
+{
+	std::wstring tempDir;
+	DWORD size = ::GetTempPath(0, nullptr);
+
+	if (!size) {
+		throw std::runtime_error("Failed to get temp path");
+	}
+		
+	tempDir.resize(size + 1);
+	size = ::GetTempPath(size + 1, tempDir.data());
+
+	if (!size || size >= tempDir.size()) {
+		throw std::runtime_error("Failed to get temp path");
+	}
+		
+	tempDir.resize(size);
+	return tempDir;
+}
+
+// A windows 7 compatible version of getHostArchitecture, must either be x64 or x86
+HostArchitecture::Value getLegacyHostArchitecture() {
+#if defined(_M_X64)
+	// x64 bin will only run on x64 Windows 7 & 8
+	return HostArchitecture::X64;
+#else
+	BOOL isWow64 = FALSE;
+
+	if (!::IsWow64Process(::GetCurrentProcess(), &isWow64)) {
+		return HostArchitecture::Value::UNKNOWN;
+	}
+
+	if (isWow64) {
+		return HostArchitecture::Value::X64;
+	}
+
+	return HostArchitecture::Value::X86;
+# endif
+}
+
+// https://devblogs.microsoft.com/oldnewthing/20220209-00/?p=106239
+// Slightly fun as we are almost always ran though emulation
+HostArchitecture::Value SystemHelper::getHostArchitecture() {
+#if defined(_M_ARM64)
+	// ARM64 bin will only run on ARM64.
+	return HostArchitecture::ARM64;
+#else
+	const auto kernel32Handle = ::GetModuleHandle(TEXT("kernel32.dll"));
+
+	if (kernel32Handle == NULL) {
+		throw std::runtime_error("Failed to get kernel32.dll handle, irreversible global collapse imminent!");
+	}
+
+	// IsWow64Process2 was added in Windows 10 1709 
+	typedef BOOL(WINAPI* IsWow64Process2Func)(HANDLE, USHORT*, USHORT*);
+	const IsWow64Process2Func is_wow64_process2 = reinterpret_cast<IsWow64Process2Func>(::GetProcAddress(kernel32Handle, "IsWow64Process2"));
+
+	if (!is_wow64_process2) {
+		// Running on older windows.
+		return getLegacyHostArchitecture();
+	}
+
+	USHORT process_machine = 0;
+	USHORT native_machine = IMAGE_FILE_MACHINE_UNKNOWN;
+	const auto result = is_wow64_process2(::GetCurrentProcess(), &process_machine, &native_machine);
+
+	if (result == 0) {
+		// Error/Unknown
+		return HostArchitecture::Value::UNKNOWN;
+	}
+
+	switch (native_machine) {
+	case IMAGE_FILE_MACHINE_ARM64:
+		return HostArchitecture::Value::ARM64;
+	case IMAGE_FILE_MACHINE_AMD64:
+		return HostArchitecture::Value::X64;
+	case IMAGE_FILE_MACHINE_I386:
+		return HostArchitecture::Value::X86;
+	default:
+		return HostArchitecture::Value::UNKNOWN;
+	}
+# endif
+}
+
+long long SystemHelper::getEpochTime()
+{
+	const auto now = std::chrono::system_clock::now();
+	return std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
 }

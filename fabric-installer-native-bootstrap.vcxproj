@@ -262,6 +262,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Bootstrap.cpp" />
+    <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SystemHelper.cpp" />
   </ItemGroup>
@@ -269,6 +270,7 @@
     <ClInclude Include="src\Bootstrap.h" />
     <ClInclude Include="src\ISystemHelper.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="src\Logger.h" />
     <ClInclude Include="src\SystemHelper.h" />
   </ItemGroup>
   <ItemGroup>

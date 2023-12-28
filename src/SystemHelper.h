@@ -11,4 +11,7 @@ public:
 	bool fileExists(const std::wstring& path) override;
 	bool dirExists(const std::wstring& path) override;
 	std::wstring getBootstrapFilename() override;
+	std::wstring getTempDir() override;
+	HostArchitecture::Value getHostArchitecture() override;
+	long long getEpochTime() override;
 };
