@@ -39,6 +39,8 @@ _Use_decl_annotations_ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevI
 	try {
 		bs.launch();
 	} catch (const std::runtime_error& error) {
+		logger.log(L"a runtime error occured:");
+		logger.log(error.what());
 		std::cout << error.what() << std::endl;
 		return 1;
 	}
