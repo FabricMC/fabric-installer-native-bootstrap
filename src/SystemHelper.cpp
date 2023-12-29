@@ -4,7 +4,7 @@
 #include <sstream>
 #include <chrono>
 
-std::optional<std::wstring> SystemHelper::getRegValue(HKEY hive, const std::wstring& path, const std::wstring& key) {
+std::optional<std::wstring> SystemHelper::getRegValue(HKEY hive, const std::wstring& path, const std::wstring& key) const {
 	DWORD dataSize{};
 	LONG retCode = ::RegGetValueW(
 		hive,
@@ -43,8 +43,7 @@ std::optional<std::wstring> SystemHelper::getRegValue(HKEY hive, const std::wstr
 	return value;
 }
 
-std::optional<std::wstring> SystemHelper::getEnvVar(const std::wstring& key)
-{
+std::optional<std::wstring> SystemHelper::getEnvVar(const std::wstring& key) const {
 	// Read the size of the env var
 	DWORD size = ::GetEnvironmentVariableW(key.c_str(), nullptr, 0);
 	if (!size || ::GetLastError() == ERROR_ENVVAR_NOT_FOUND) {
@@ -62,7 +61,7 @@ std::optional<std::wstring> SystemHelper::getEnvVar(const std::wstring& key)
 	return value;
 }
 
-void SystemHelper::showErrorMessage(const std::wstring& title, const std::wstring& message, const std::wstring& url) {
+void SystemHelper::showErrorMessage(const std::wstring& title, const std::wstring& message, const std::wstring& url) const {
 	const int result = ::MessageBoxW(
 		nullptr,
 		message.c_str(),
@@ -75,8 +74,7 @@ void SystemHelper::showErrorMessage(const std::wstring& title, const std::wstrin
 	}
 }
 
-DWORD SystemHelper::createProcess(std::vector<std::wstring> args)
-{
+DWORD SystemHelper::createProcess(std::vector<std::wstring> args) const {
 	STARTUPINFOW info;
 	PROCESS_INFORMATION processInfo;
 
@@ -122,24 +120,23 @@ DWORD SystemHelper::createProcess(std::vector<std::wstring> args)
 	}
 }
 
-bool SystemHelper::fileExists(const std::wstring& path) {
+bool SystemHelper::fileExists(const std::wstring& path) const {
 	const auto attributes = ::GetFileAttributesW(path.c_str());
 	return (attributes != INVALID_FILE_ATTRIBUTES && !(attributes & FILE_ATTRIBUTE_DIRECTORY));
 }
 
-bool SystemHelper::dirExists(const std::wstring& path) {
+bool SystemHelper::dirExists(const std::wstring& path) const {
 	const auto attributes = ::GetFileAttributesW(path.c_str());
 	return (attributes != INVALID_FILE_ATTRIBUTES && (attributes & FILE_ATTRIBUTE_DIRECTORY));
 }
 
-std::wstring SystemHelper::getBootstrapFilename() {
+std::wstring SystemHelper::getBootstrapFilename() const {
 	wchar_t moduleFileName[MAX_PATH] = { 0 };
 	::GetModuleFileNameW(nullptr, moduleFileName, MAX_PATH);
 	return moduleFileName;
 }
 
-std::wstring SystemHelper::getTempDir()
-{
+std::wstring SystemHelper::getTempDir() const {
 	std::wstring tempDir;
 	DWORD size = ::GetTempPath(0, nullptr);
 
@@ -147,7 +144,7 @@ std::wstring SystemHelper::getTempDir()
 		throw std::runtime_error("Failed to get temp path");
 	}
 		
-	tempDir.resize(size + 1);
+	tempDir.resize((size_t) size + 1);
 	size = ::GetTempPath(size + 1, tempDir.data());
 
 	if (!size || size >= tempDir.size()) {
@@ -159,31 +156,31 @@ std::wstring SystemHelper::getTempDir()
 }
 
 // A windows 7 compatible version of getHostArchitecture, must either be x64 or x86
-HostArchitecture::Value getLegacyHostArchitecture() {
+Architecture::Value getLegacyHostArchitecture() {
 #if defined(_M_X64)
 	// x64 bin will only run on x64 Windows 7 & 8
-	return HostArchitecture::X64;
+	return Architecture::X64;
 #else
 	BOOL isWow64 = FALSE;
 
 	if (!::IsWow64Process(::GetCurrentProcess(), &isWow64)) {
-		return HostArchitecture::Value::UNKNOWN;
+		return Architecture::Value::UNKNOWN;
 	}
 
 	if (isWow64) {
-		return HostArchitecture::Value::X64;
+		return Architecture::Value::X64;
 	}
 
-	return HostArchitecture::Value::X86;
+	return Architecture::Value::X86;
 # endif
 }
 
 // https://devblogs.microsoft.com/oldnewthing/20220209-00/?p=106239
 // Slightly fun as we are almost always ran though emulation
-HostArchitecture::Value SystemHelper::getHostArchitecture() {
+Architecture::Value SystemHelper::getHostArchitecture() const {
 #if defined(_M_ARM64)
 	// ARM64 bin will only run on ARM64.
-	return HostArchitecture::ARM64;
+	return Architecture::ARM64;
 #else
 	const auto kernel32Handle = ::GetModuleHandle(TEXT("kernel32.dll"));
 
@@ -206,24 +203,23 @@ HostArchitecture::Value SystemHelper::getHostArchitecture() {
 
 	if (result == 0) {
 		// Error/Unknown
-		return HostArchitecture::Value::UNKNOWN;
+		return Architecture::Value::UNKNOWN;
 	}
 
 	switch (native_machine) {
 	case IMAGE_FILE_MACHINE_ARM64:
-		return HostArchitecture::Value::ARM64;
+		return Architecture::Value::ARM64;
 	case IMAGE_FILE_MACHINE_AMD64:
-		return HostArchitecture::Value::X64;
+		return Architecture::Value::X64;
 	case IMAGE_FILE_MACHINE_I386:
-		return HostArchitecture::Value::X86;
+		return Architecture::Value::X86;
 	default:
-		return HostArchitecture::Value::UNKNOWN;
+		return Architecture::Value::UNKNOWN;
 	}
 # endif
 }
 
-long long SystemHelper::getEpochTime()
-{
+int64_t SystemHelper::getEpochTime() const {
 	const auto now = std::chrono::system_clock::now();
 	return std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
 }

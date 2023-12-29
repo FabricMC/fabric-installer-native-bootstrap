@@ -20,7 +20,7 @@ private:
 
 	void showErrorMessage();
 
-	const std::vector<std::wstring> getMinecraftJavaPaths(const HostArchitecture::Value& hostArch);
+	const std::vector<std::wstring> getMinecraftJavaPaths(const Architecture::Value& hostArch);
 
 private:
 	ISystemHelper& systemHelper;

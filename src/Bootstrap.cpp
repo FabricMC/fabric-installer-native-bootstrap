@@ -39,8 +39,8 @@ void Bootstrap::launch() {
 }
 
 bool Bootstrap::launchMinecraftLauncher() {
-	const HostArchitecture::Value hostArch = systemHelper.getHostArchitecture();
-	logger.log(L"Host archiecture: " + HostArchitecture::AsString(hostArch));
+	const Architecture::Value hostArch = systemHelper.getHostArchitecture();
+	logger.log(L"Host archiecture: " + Architecture::AsString(hostArch));
 
 	const auto javaPaths = getMinecraftJavaPaths(hostArch);
 
@@ -140,31 +140,31 @@ bool Bootstrap::attemptLaunch(const std::wstring& path, bool checkExists) {
 }
 
 // Return all of the possible java paths, starting with the newest on the host platform, down to the oldest on the none host platforms.
-const std::vector<std::wstring> Bootstrap::getMinecraftJavaPaths(const HostArchitecture::Value& hostArch) {
+const std::vector<std::wstring> Bootstrap::getMinecraftJavaPaths(const Architecture::Value& hostArch) {
 	std::vector<std::wstring> paths;
 
-	for (const HostArchitecture::Value& arch : HostArchitecture::VALUES) {
-		if (arch == HostArchitecture::UNKNOWN) {
+	for (const Architecture::Value& arch : Architecture::VALUES) {
+		if (arch == Architecture::UNKNOWN) {
 			continue;
 		}
 
 		if (arch < hostArch) {
 			// Skip arches that the host does not support.
 			// E.g: On x64 there is no need to go looking for arm64 JDKs as its never going to run.
-			logger.log(L"Arch not supported: " + HostArchitecture::AsString(arch));
+			logger.log(L"Arch not supported: " + Architecture::AsString(arch));
 			continue;
 		}
 
 		std::wstring javaName;
 
 		switch (arch) {
-		case HostArchitecture::X64:
+		case Architecture::X64:
 			javaName = L"windows-x64";
 			break;
-		case HostArchitecture::ARM64:
+		case Architecture::ARM64:
 			javaName = L"windows-arm64";
 			break;
-		case HostArchitecture::X86:
+		case Architecture::X86:
 			javaName = L"windows-x86";
 			break;
 		default:

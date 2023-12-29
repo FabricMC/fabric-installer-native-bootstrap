@@ -261,12 +261,14 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Architecture.cpp" />
     <ClCompile Include="src\Bootstrap.cpp" />
     <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SystemHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Architecture.h" />
     <ClInclude Include="src\Bootstrap.h" />
     <ClInclude Include="src\ISystemHelper.h" />
     <ClInclude Include="resource.h" />
