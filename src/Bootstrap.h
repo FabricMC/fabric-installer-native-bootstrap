@@ -3,10 +3,11 @@
 #include <memory>
 
 #include "ISystemHelper.h"
+#include "Logger.h"
 
 class Bootstrap {
 public:
-	explicit Bootstrap(const std::shared_ptr<ISystemHelper>& systemHelper);
+	explicit Bootstrap(ISystemHelper& systemHelper, Logger& logger);
 
 public:
 	void launch();
@@ -19,6 +20,9 @@ private:
 
 	void showErrorMessage();
 
+	const std::vector<std::wstring> getMinecraftJavaPaths(const Architecture::Value& hostArch);
+
 private:
-	std::shared_ptr<ISystemHelper> systemHelper;
+	ISystemHelper& systemHelper;
+	Logger& logger;
 };
