@@ -15,6 +15,7 @@ namespace {
 
 	// Find these here: https://piston-meta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json
 	static const std::vector<LPCWSTR> JAVA_NAMES = {
+		L"java-runtime-delta", // Java 21.0.2
 		L"java-runtime-gamma", // Java 17.0.8
 		L"java-runtime-beta", // Java 17.0.1
 		L"java-runtime-alpha", // Java 16
