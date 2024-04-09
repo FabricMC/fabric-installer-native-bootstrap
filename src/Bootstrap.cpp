@@ -41,7 +41,7 @@ void Bootstrap::launch() {
 
 bool Bootstrap::launchMinecraftLauncher() {
 	const Architecture::Value hostArch = systemHelper.getHostArchitecture();
-	logger.log(L"Host archiecture: " + Architecture::AsString(hostArch));
+	logger.log(L"Host architecture: " + Architecture::AsString(hostArch));
 
 	const auto javaPaths = getMinecraftJavaPaths(hostArch);
 
