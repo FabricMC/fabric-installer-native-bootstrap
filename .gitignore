@@ -4,6 +4,7 @@
 !/res
 !/platform
 !/.github
+!/packager
 
 !.gitignore
 !*.cpp
@@ -14,6 +15,7 @@
 !*.ico
 !*.rc
 !*.manifest
+!packages.config
 
 !LICENSE
 !build.gradle

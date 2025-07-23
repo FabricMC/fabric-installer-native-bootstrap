@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <optional>
+#include <filesystem>
 
 #include "ISystemHelper.h"
 #include "Logger.h"
@@ -22,7 +24,10 @@ private:
 
 	const std::vector<std::wstring> getMinecraftJavaPaths(const Architecture::Value& hostArch);
 
+	std::filesystem::path getExtractedInstaller();
+
 private:
 	ISystemHelper& systemHelper;
 	Logger& logger;
+	std::optional<std::filesystem::path> extractedInstaller = std::nullopt;
 };

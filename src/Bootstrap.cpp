@@ -1,5 +1,9 @@
 #include "Bootstrap.h"
 
+#include "EmbeddedResource.h"
+#include "resource.h"
+#include <wil/result.h>
+
 #include <vector>
 #include <sstream>
 
@@ -77,7 +81,7 @@ bool Bootstrap::launchMinecraftLauncher() {
 				}
 			}
 		}
-		else { 
+		else {
 			logger.log(L"Did not find Minecraft UWP at " + launcherPath);
 		}
 	}
@@ -130,7 +134,9 @@ bool Bootstrap::attemptLaunch(const std::wstring& path, bool checkExists) {
 
 	logger.log(L"Found valid Java path (" + path + L")");
 
-	exit = systemHelper.createProcess({ path, L"-jar", systemHelper.getBootstrapFilename(), L"-fabricInstallerBootstrap", L"true" });
+	auto installerPath{ getExtractedInstaller() };
+
+	exit = systemHelper.createProcess({ path, L"-jar", installerPath, L"-fabricInstallerBootstrap", L"true" });
 	if (exit != 0) {
 		// The installer returned a none 0 exit code, meaning that most likely the installer crashed.
 		logger.log(L"Installer failed or crashed, exit code: " + std::to_wstring(exit));
@@ -183,4 +189,25 @@ const std::vector<std::wstring> Bootstrap::getMinecraftJavaPaths(const Architect
 	}
 
 	return paths;
+}
+
+std::filesystem::path Bootstrap::getExtractedInstaller()
+{
+	if (extractedInstaller.has_value()) {
+		return *extractedInstaller;
+	}
+
+	std::filesystem::path tempDir{ systemHelper.getTempDir() };
+
+	wchar_t buffer[MAX_PATH] = {};
+	THROW_LAST_ERROR_IF(!GetTempFileNameW(tempDir.c_str(), L"fabric-installer", 0, buffer));
+
+	std::filesystem::path path{ buffer };
+	logger.log(L"Extracing installer to: " + path.native());
+
+	EmbeddedResource resource{ IDI_EMBEDDED_JAR };
+	resource.ExtractToFile(path);
+
+	extractedInstaller = path;
+	return path;
 }
