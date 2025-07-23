@@ -45,7 +45,7 @@ namespace {
 		success = true;
 	}
 
-	void packageInstaller(const std::filesystem::path& bootstrap, std::filesystem::path& installer) {
+	void packageInstaller(const std::filesystem::path& bootstrap, const std::filesystem::path& installer) {
 		THROW_WIN32_IF_MSG(ERROR_FILE_NOT_FOUND, !std::filesystem::exists(bootstrap), "Boostrap not found");
 		THROW_WIN32_IF_MSG(ERROR_FILE_NOT_FOUND, !std::filesystem::exists(installer), "Installer not found");
 
