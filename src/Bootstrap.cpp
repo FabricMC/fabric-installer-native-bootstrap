@@ -203,7 +203,7 @@ std::filesystem::path Bootstrap::getExtractedInstaller()
 	THROW_LAST_ERROR_IF(!GetTempFileNameW(tempDir.c_str(), L"fabric-installer", 0, buffer));
 
 	std::filesystem::path path{ buffer };
-	logger.log(L"Extracing installer to: " + path.native());
+	logger.log(L"Extracting installer to: " + path.native());
 
 	EmbeddedResource resource{ IDI_EMBEDDED_JAR };
 	resource.ExtractToFile(path);
