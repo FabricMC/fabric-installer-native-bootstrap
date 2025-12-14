@@ -1,0 +1,9 @@
+/*
+
+!.gitignore
+!*.cpp
+!*.h
+!*.sln
+!*.vcxproj
+!*.filters
+!packages.config

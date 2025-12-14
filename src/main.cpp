@@ -29,7 +29,7 @@ _Use_decl_annotations_ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevI
 	::HeapSetInformation(::GetProcessHeap(), HeapEnableTerminationOnCorruption, NULL, 0);
 
 	SystemHelper systemHelper;
-	Logger logger { systemHelper };
+	Logger logger{ systemHelper };
 
 	logger.log(L"Fabric launcher native bootstrap log:");
 
@@ -37,8 +37,9 @@ _Use_decl_annotations_ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevI
 
 	try {
 		bs.launch();
-	} catch (const std::runtime_error& error) {
-		logger.log(L"a runtime error occured:");
+	}
+	catch (const std::runtime_error& error) {
+		logger.log(L"A runtime error occurred:");
 		logger.log(error.what());
 		return 1;
 	}

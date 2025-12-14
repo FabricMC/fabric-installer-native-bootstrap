@@ -3,62 +3,21 @@
 #include <Shlwapi.h>
 #include <sstream>
 #include <chrono>
+#include <wil/registry.h>
+#include <wil/win32_helpers.h>
 
 std::optional<std::wstring> SystemHelper::getRegValue(HKEY hive, const std::wstring& path, const std::wstring& key) const {
-	DWORD dataSize{};
-	LONG retCode = ::RegGetValueW(
-		hive,
-		path.c_str(),
-		key.c_str(),
-		RRF_RT_REG_SZ,
-		nullptr,
-		nullptr,
-		&dataSize
-	);
-
-	if (retCode != ERROR_SUCCESS) {
-		return std::nullopt;
-	}
-
-	std::wstring value;
-	value.resize(dataSize / sizeof(wchar_t));
-
-	retCode = ::RegGetValueW(
-		hive,
-		path.c_str(),
-		key.c_str(),
-		RRF_RT_REG_SZ,
-		nullptr,
-		value.data(),
-		&dataSize
-	);
-
-	if (retCode != ERROR_SUCCESS) {
-		return std::nullopt;
-	}
-
-	DWORD stringLengthInWchars = dataSize / sizeof(wchar_t);
-	stringLengthInWchars--; // Exclude the NUL written by the Win32 API
-	value.resize(stringLengthInWchars);
-	return value;
+	return wil::reg::try_get_value_string(hive, path.c_str(), key.c_str());
 }
 
 std::optional<std::wstring> SystemHelper::getEnvVar(const std::wstring& key) const {
-	// Read the size of the env var
-	DWORD size = ::GetEnvironmentVariableW(key.c_str(), nullptr, 0);
-	if (!size || ::GetLastError() == ERROR_ENVVAR_NOT_FOUND) {
-		return std::nullopt;
+	auto value{ wil::TryGetEnvironmentVariableW(key.c_str()) };
+
+	if (value) {
+		return wil::str_raw_ptr(value);
 	}
 
-	// Read the env var
-	std::wstring value(size, L'\0');
-	size = ::GetEnvironmentVariableW(key.c_str(), value.data(), size);
-	if (!size || size >= value.size()) {
-		return std::nullopt;
-	}
-
-	value.resize(size);
-	return value;
+	return std::nullopt;
 }
 
 void SystemHelper::showErrorMessage(const std::wstring& title, const std::wstring& message, const std::wstring& url) const {
@@ -74,21 +33,20 @@ void SystemHelper::showErrorMessage(const std::wstring& title, const std::wstrin
 	}
 }
 
-DWORD SystemHelper::createProcess(std::vector<std::wstring> args) const {
-	STARTUPINFOW info;
-	PROCESS_INFORMATION processInfo;
-
-	ZeroMemory(&info, sizeof(info));
-	ZeroMemory(&processInfo, sizeof(processInfo));
+DWORD SystemHelper::createProcess(const std::vector<std::wstring>& args) const {
+	STARTUPINFOW info{ 0 };
+	wil::unique_process_information processInfo;
 
 	std::wstringstream cls;
 	for (auto& arg : args) {
 		cls << L"\"" << arg << L"\" ";
 	}
+
+	// Must copy as CreateProcessW can mutate this!!
 	std::wstring commandLine = cls.str();
 
 	// Create the child process
-	if (::CreateProcessW(
+	THROW_LAST_ERROR_IF(!::CreateProcessW(
 		nullptr,
 		commandLine.data(),
 		nullptr,
@@ -98,26 +56,18 @@ DWORD SystemHelper::createProcess(std::vector<std::wstring> args) const {
 		nullptr,
 		nullptr,
 		&info,
-		&processInfo)) {
+		&processInfo)
+	);
 
-		// Wait for exit
-		::WaitForSingleObject(processInfo.hProcess, INFINITE);
+	// Wait for exit
+	::WaitForSingleObject(processInfo.hProcess, INFINITE);
 
-		// Read exit code
-		DWORD exitCode;
-		::GetExitCodeProcess(processInfo.hProcess, &exitCode);
+	// Read exit code
+	DWORD exitCode;
+	::GetExitCodeProcess(processInfo.hProcess, &exitCode);
 
-		// Clean up
-		::CloseHandle(processInfo.hThread);
-		::CloseHandle(processInfo.hProcess);
+	return exitCode;
 
-		return exitCode;
-	}
-	else {
-		std::string msg = "Failed to create process: " + std::to_string(GetLastError());
-		return 255;
-		//            throw std::exception(msg.c_str());
-	}
 }
 
 bool SystemHelper::fileExists(const std::wstring& path) const {
@@ -138,19 +88,13 @@ std::wstring SystemHelper::getBootstrapFilename() const {
 
 std::wstring SystemHelper::getTempDir() const {
 	std::wstring tempDir;
-	DWORD size = ::GetTempPath(0, nullptr);
+	DWORD size = ::GetTempPathW(0, nullptr);
+	THROW_LAST_ERROR_IF(!size);
 
-	if (!size) {
-		throw std::runtime_error("Failed to get temp path");
-	}
-		
-	tempDir.resize((size_t) size + 1);
-	size = ::GetTempPath(size + 1, tempDir.data());
+	tempDir.resize((size_t)size + 1);
+	size = ::GetTempPathW(size + 1, tempDir.data());
+	THROW_LAST_ERROR_IF(!size || size >= tempDir.size());
 
-	if (!size || size >= tempDir.size()) {
-		throw std::runtime_error("Failed to get temp path");
-	}
-		
 	tempDir.resize(size);
 	return tempDir;
 }
