@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <sstream>
+#include <array>
 
 namespace {
 	constexpr LPCWSTR ERROR_TITLE = L"Fabric Installer";
@@ -14,7 +15,8 @@ namespace {
 	constexpr LPCWSTR UWP_PATH = LR"(\Packages\Microsoft.4297127D64EC6_8wekyb3d8bbwe\LocalCache\Local\)";
 
 	// Find these here: https://piston-meta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json
-	static const std::vector<LPCWSTR> JAVA_NAMES = {
+	constexpr std::array<std::wstring_view, 6> JAVA_NAMES = {
+		L"java-runtime-epsilon", // Java 25
 		L"java-runtime-delta", // Java 21.0.2
 		L"java-runtime-gamma", // Java 17.0.8
 		L"java-runtime-beta", // Java 17.0.1
@@ -172,7 +174,7 @@ const std::vector<std::wstring> Bootstrap::getMinecraftJavaPaths(const Architect
 			continue;
 		}
 
-		for (const LPCWSTR& name : JAVA_NAMES) {
+		for (const auto& name : JAVA_NAMES) {
 			std::wstringstream buffer;
 			// runtime\java-runtime-gamma\windows-x64\java-runtime-gamma\bin\javaw.exe
 			buffer << LR"(runtime\)" << name << LR"(\)" << javaName << LR"(\)" << name << LR"(\bin\javaw.exe)";
