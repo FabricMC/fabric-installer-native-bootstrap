@@ -9,7 +9,7 @@
 namespace ErrorDialog {
 	namespace {
 		constexpr std::wstring_view ERROR_TITLE = L"Fabric Installer";
-		constexpr std::wstring_view ERROR_MESSAGE = L"The Fabric Installer could not find a valid Java installation.\n\nClick <a href=\"\">here</a> to open the Fabric documentation to find out how to fix this.";
+		constexpr std::wstring_view ERROR_MESSAGE = L"The Fabric Installer could not find a valid Java installation.\n\nPlease visit the the Fabric documentation to find out how to fix this:\n\n<a href=\"\">https://docs.fabricmc.net/players/installing-java/windows</a>";
 		constexpr std::wstring_view ERROR_URL = L"https://docs.fabricmc.net/players/installing-java/windows";
 
 		HRESULT CALLBACK dialogCallback(HWND /*hwnd*/, UINT msg, WPARAM /*wParam*/, LPARAM /*lParam*/, LONG_PTR /*refData*/) {
