@@ -6,14 +6,14 @@ jobs:
       matrix:
         platform: [ x64, Win32, ARM64 ]
         configuration: [ Release, Debug ]
-    runs-on: windows-2022
+    runs-on: windows-2025
     steps:
-      - uses: actions/checkout@v2
-      - uses: microsoft/setup-msbuild@v1.1
+      - uses: actions/checkout@v6
+      - uses: microsoft/setup-msbuild@v2
         with:
           msbuild-architecture: x64
       - run: msbuild.exe fabric-installer-native-bootstrap.sln /property:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v6
         with:
           name: Artifacts ${{ matrix.platform }} ${{ matrix.configuration }}
           path: |
