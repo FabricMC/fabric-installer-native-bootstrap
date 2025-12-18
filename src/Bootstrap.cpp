@@ -1,14 +1,12 @@
 #include "Bootstrap.h"
+#include "ErrorDialog.h"
 
 #include <vector>
 #include <sstream>
 #include <array>
 
 namespace {
-	constexpr LPCWSTR ERROR_TITLE = L"Fabric Installer";
-	constexpr LPCWSTR ERROR_MESSAGE = L"The Fabric Installer could not find a valid Java installation.\n\nWould you like to open the Fabric wiki to find out how to fix this?\n\nURL: https://fabricmc.net/wiki/player:tutorials:java:windows";
-	constexpr LPCWSTR ERROR_URL = L"https://fabricmc.net/wiki/player:tutorials:java:windows";
-
+	
 	constexpr LPCWSTR MC_LAUNCH_REG_PATH = LR"(SOFTWARE\Mojang\InstalledProducts\Minecraft Launcher)";
 	constexpr LPCWSTR MC_LAUNCH_REG_KEY = L"InstallLocation";
 
@@ -112,7 +110,7 @@ bool Bootstrap::launchSystemJava() {
 
 void Bootstrap::showErrorMessage() {
 	logger.log("Failed to launch showing error dialog");
-	systemHelper.showErrorMessage(ERROR_TITLE, ERROR_MESSAGE, ERROR_URL);
+	ErrorDialog::showErrorDialog();
 }
 
 bool Bootstrap::attemptLaunch(const std::wstring& path, bool checkExists) {

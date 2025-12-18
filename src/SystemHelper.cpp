@@ -61,19 +61,6 @@ std::optional<std::wstring> SystemHelper::getEnvVar(const std::wstring& key) con
 	return value;
 }
 
-void SystemHelper::showErrorMessage(const std::wstring& title, const std::wstring& message, const std::wstring& url) const {
-	const int result = ::MessageBoxW(
-		nullptr,
-		message.c_str(),
-		title.c_str(),
-		MB_ICONWARNING | MB_YESNO
-	);
-
-	if (result == IDYES) {
-		::ShellExecuteW(nullptr, nullptr, url.c_str(), nullptr, nullptr, SW_SHOW);
-	}
-}
-
 DWORD SystemHelper::createProcess(std::vector<std::wstring> args) const {
 	STARTUPINFOW info;
 	PROCESS_INFORMATION processInfo;
