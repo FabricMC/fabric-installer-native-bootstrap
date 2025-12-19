@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = "0.5.2"
+version = "0.6.0"
 
 def ENV = System.getenv()
 
